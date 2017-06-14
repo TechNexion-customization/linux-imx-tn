@@ -860,7 +860,7 @@ dhd_conf_set_roam(dhd_pub_t *dhd)
 		printf("%s: set roam_delta %d\n", __FUNCTION__, conf->roam_delta[0]);
 		dhd_conf_set_bufiovar(dhd, WLC_SET_ROAM_DELTA, "WLC_SET_ROAM_DELTA",
 				(char *)conf->roam_delta, sizeof(conf->roam_delta), FALSE);
-		
+
 		dhd_conf_set_intiovar(dhd, WLC_SET_VAR, "fullroamperiod", dhd->conf->fullroamperiod, 1, FALSE);
 	}
 
