@@ -16,6 +16,7 @@ DHDCFLAGS = -Wall -Wstrict-prototypes -Dlinux -DBCMDRIVER -DSDTEST       \
 	-DTSQ_MULTIPLIER                                                      \
 	-DBCMSDIOH_TXGLOM_EXT -DWL_EXT_IAPSTA                                 \
 	-DENABLE_INSMOD_NO_FW_LOAD                                            \
+	-DCONFIG_DTS -DCUSTOMER_IMX \
 	-Idrivers/net/wireless/bcmdhd -Idrivers/net/wireless/bcmdhd/include
 
 DHDOFILES = aiutils.o siutils.o sbutils.o bcmutils.o bcmwifi_channels.o \
@@ -56,7 +57,7 @@ bcmdhd-objs += $(DHDOFILES)
 
 #ifeq ($(CONFIG_MACH_PLATFORM),y)
 DHDOFILES += dhd_gpio.o
-DHDCFLAGS += -DCUSTOMER_HW -DDHD_OF_SUPPORT
+DHDCFLAGS += -DDHD_OF_SUPPORT
 #DHDCFLAGS += -DBCMWAPI_WPI -DBCMWAPI_WAI
 #endif
 

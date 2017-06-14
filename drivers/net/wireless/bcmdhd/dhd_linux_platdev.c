@@ -203,6 +203,32 @@ int wifi_platform_set_power(wifi_adapter_info_t *adapter, bool on, unsigned long
 	return err;
 }
 
+#if defined(CUSTOMER_IMX)
+extern void wifi_card_detect(bool);
+int wifi_platform_bus_enumerate(wifi_adapter_info_t *adapter, bool device_present)
+{
+	int err = 0;
+	struct wifi_platform_data *plat_data;
+
+	if (!adapter) {
+		pr_err("!!!! %s: failed!  adapter variable is NULL!!!!!\n", __FUNCTION__);
+		return -EINVAL;
+	}
+
+	DHD_ERROR(("%s device present %d\n", __FUNCTION__, device_present));
+
+	if (!adapter->wifi_plat_data) {
+		wifi_card_detect(device_present); /* hook for card_detect */
+	} else {
+		plat_data = adapter->wifi_plat_data;
+		if (plat_data->set_carddetect)
+		err = plat_data->set_carddetect(device_present);
+	}
+
+	return 0; /* force success status returned */
+}
+
+#else
 int wifi_platform_bus_enumerate(wifi_adapter_info_t *adapter, bool device_present)
 {
 	int err = 0;
@@ -219,6 +245,7 @@ int wifi_platform_bus_enumerate(wifi_adapter_info_t *adapter, bool device_presen
 	return err;
 
 }
+#endif /* CUSTOMER_IMX */
 
 int wifi_platform_get_mac_addr(wifi_adapter_info_t *adapter, unsigned char *buf)
 {
@@ -294,6 +321,7 @@ static int wifi_plat_dev_drv_probe(struct platform_device *pdev)
 		return -1;
 	}
 
+#if defined(OOB_INTR_ONLY) && defined(HW_OOB)
 	/* This is to get the irq for the OOB */
 	gpio = of_get_gpio(pdev->dev.of_node, 0);
 
@@ -311,6 +339,7 @@ static int wifi_plat_dev_drv_probe(struct platform_device *pdev)
 	/* need to change the flags according to our requirement */
 	adapter->intr_flags = IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHLEVEL |
 		IORESOURCE_IRQ_SHAREABLE;
+#endif /* defined(OOB_INTR_ONLY) && defined (HW_OOB) */
 #endif /* CONFIG_DTS */
 
 	wifi_plat_dev_probe_ret = dhd_wifi_platform_load();
