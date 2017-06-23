@@ -70,7 +70,8 @@ uint config_msg_level = CONFIG_ERROR_LEVEL;
 #ifdef BCMSDIO
 #define SBSDIO_CIS_SIZE_LIMIT		0x200		/* maximum bytes in one CIS */
 
-#define FW_BCM4330B2 "fw_bcm40183b2"
+#define FW_BCM4330B2 "fw_bcm4330_bg"
+#define FW_BCM4330B2_AP "fw_bcm4330_apsta_bg"
 #define FW_BCM4330B2_AG "fw_bcm40183b2_ag.bin"
 #define FW_BCM43362A0 "fw_bcm40181a0"
 #define FW_BCM43362A2 "fw_bcm40181a2"
@@ -86,6 +87,13 @@ uint config_msg_level = CONFIG_ERROR_LEVEL;
 #define FW_BCM4356A2 "fw_bcm4356a2_ag"
 #define FW_BCM4359B1 "fw_bcm4359b1_ag"
 #define FW_BCM4359C0 "fw_bcm4359c0_ag"
+
+#define NV_BCM4330B2 "brcmfmac4330-sdio.txt"
+#define NV_BCM4339A0 "nvram_ap6335.txt"
+#define NV_BCM43438A0 "nvram_ap6212.txt"
+#define NV_BCM43438A1 "nvram_ap6212a.txt"
+#define NV_BCM43438B0 "nvram_ap6236.txt"
+#define NV_BCM43455C0 "nvram_ap6255.txt"
 #endif
 #ifdef BCMPCIE
 #define FW_BCM4356A2 "fw_bcm4356a2_pcie_ag"
@@ -360,6 +368,10 @@ dhd_conf_set_fw_name_by_chip(dhd_pub_t *dhd, char *fw_path)
 			printf("firmware path is null\n");
 			return;
 		}
+	} else {
+		printf("The firmware path is specified by module parameter\n");
+		printf("%s: firmware_path=%s\n", __FUNCTION__, fw_path);
+		return;
 	}
 #ifndef FW_PATH_AUTO_SELECT
 	return;
@@ -485,16 +497,6 @@ dhd_conf_set_nv_name_by_chip(dhd_pub_t *dhd, char *nv_path)
 	chip = dhd->conf->chip;
 	chiprev = dhd->conf->chiprev;
 
-	for (i=0; i<dhd->conf->nv_by_chip.count; i++) {
-		if (chip==dhd->conf->nv_by_chip.m_chip_nv_path_head[i].chip &&
-				chiprev==dhd->conf->nv_by_chip.m_chip_nv_path_head[i].chiprev) {
-			matched = i;
-			break;
-		}
-	}
-	if (matched < 0)
-		return;
-
 	if (nv_path[0] == '\0') {
 #ifdef CONFIG_BCMDHD_NVRAM_PATH
 		bcm_strncpy_s(nv_path, MOD_PARAM_PATHLEN-1, CONFIG_BCMDHD_NVRAM_PATH, MOD_PARAM_PATHLEN-1);
@@ -504,6 +506,10 @@ dhd_conf_set_nv_name_by_chip(dhd_pub_t *dhd, char *nv_path)
 			printf("nvram path is null\n");
 			return;
 		}
+	} else {
+		printf("The nvram path is specified by module parameter\n");
+		printf("%s: nvram_path=%s\n", __FUNCTION__, nv_path);
+		return;
 	}
 
 	/* find out the last '/' */
@@ -513,7 +519,44 @@ dhd_conf_set_nv_name_by_chip(dhd_pub_t *dhd, char *nv_path)
 		i--;
 	}
 
-	strcpy(&nv_path[i+1], dhd->conf->nv_by_chip.m_chip_nv_path_head[matched].name);
+	switch (chip) {
+#ifdef BCMSDIO
+		case BCM4330_CHIP_ID:
+			if (chiprev == BCM4330B2_CHIP_REV)
+				strcpy(&nv_path[i+1], NV_BCM4330B2);
+			break;
+		case BCM43430_CHIP_ID:
+			if (chiprev == BCM43430A0_CHIP_REV)
+				strcpy(&nv_path[i+1], NV_BCM43438A0);
+			else if (chiprev == BCM43430A1_CHIP_REV)
+				strcpy(&nv_path[i+1], NV_BCM43438A1);
+			else if (chiprev == BCM43430A2_CHIP_REV)
+				strcpy(&nv_path[i+1], NV_BCM43438B0);
+			break;
+		case BCM4335_CHIP_ID:
+		case BCM4339_CHIP_ID:
+			if (chiprev == BCM4339A0_CHIP_REV)
+				strcpy(&nv_path[i+1], NV_BCM4339A0);
+			break;
+		case BCM4345_CHIP_ID:
+		case BCM43454_CHIP_ID:
+			if (chiprev == BCM43455C0_CHIP_REV)
+				strcpy(&nv_path[i+1], NV_BCM43455C0);
+			break;
+#endif
+		default:
+			for (i=0; i<dhd->conf->nv_by_chip.count; i++) {
+				if (chip==dhd->conf->nv_by_chip.m_chip_nv_path_head[i].chip &&
+					chiprev==dhd->conf->nv_by_chip.m_chip_nv_path_head[i].chiprev) {
+					matched = i;
+					break;
+				}
+			}
+			if (matched < 0)
+				return;
+			strcpy(&nv_path[i+1], dhd->conf->nv_by_chip.m_chip_nv_path_head[matched].name);
+			break;
+	}
 
 	printf("%s: nvram_path=%s\n", __FUNCTION__, nv_path);
 }
