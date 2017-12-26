@@ -64,6 +64,7 @@ static bool dma_w_end, dma_r_end, dma_en;
 struct imx_pcie {
 	struct pcie_port	pp;	/* pp.dbi_base is DT 0th resource */
 	u32 			ext_osc;
+	u32 			osc_refclk_in;
 	u32			ctrl_id;
 	u32			cpu_base;
 	u32			hard_wired;
@@ -2151,6 +2152,10 @@ static int imx_pcie_probe(struct platform_device *pdev)
 
 	if (of_property_read_u32(node, "ext_osc", &imx_pcie->ext_osc) < 0)
 		imx_pcie->ext_osc = 0;
+
+	/* choose external or internal reference clock for imx7 */
+	if (of_property_read_u32(np, "osc-refclk-in", &imx_pcie->osc_refclk_in) < 0)
+		imx_pcie->osc_refclk_in = 0;
 
 	if (imx_pcie->ext_osc && (imx_pcie->variant == IMX6QP)) {
 		/* Change the pcie_bus clock to pcie external OSC */
