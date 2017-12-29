@@ -28,6 +28,7 @@
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
+#include <linux/clk.h>
 #include <bcmutils.h>
 #include <linux_osl.h>
 #include <dhd_dbg.h>
@@ -68,6 +69,7 @@ struct wifi_platform_data {
 
 #ifdef CONFIG_DTS
 struct regulator *wifi_regulator = NULL;
+struct clk *lpo_clk;
 #endif /* CONFIG_DTS */
 
 bool cfg_multichip = FALSE;
@@ -328,6 +330,18 @@ static int wifi_plat_dev_drv_probe(struct platform_device *pdev)
 	if (!ret)
 		DHD_INFO(("nv path:%s\n", adapter->nv_path));
 
+	lpo_clk = devm_clk_get(&pdev->dev, "lpo_clk");
+	if (!IS_ERR(lpo_clk)) {
+		ret = clk_prepare_enable(lpo_clk);
+		if (ret)
+			DHD_ERROR(("Error enabling lpo_clk %d\n", ret));
+	} else {
+		ret = PTR_ERR(lpo_clk);
+		DHD_ERROR(("Failed to get lpo_clk:%d. Maybe there is external OSC.\n", ret));
+	}
+
+	udelay(1);
+
 	wifi_regulator = regulator_get(&pdev->dev, "wlreg_on");
 	if (wifi_regulator == NULL) {
 		DHD_ERROR(("%s regulator is null\n", __FUNCTION__));
@@ -397,6 +411,9 @@ static int wifi_plat_dev_drv_remove(struct platform_device *pdev)
 	}
 
 #ifdef CONFIG_DTS
+	if (!IS_ERR(lpo_clk))
+		clk_disable_unprepare(lpo_clk);
+
 	regulator_put(wifi_regulator);
 #endif /* CONFIG_DTS */
 	return 0;
