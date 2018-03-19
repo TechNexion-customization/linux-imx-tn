@@ -44,6 +44,21 @@
 		};
 	};
 
+	sound-tfa9912 {
+		compatible = "nxp,imx-audio-tfa98xx", "nxp,imx-tfa98xx";
+		nxp,model = "TFA9912";
+		cpu-dai = <&sai2>;
+		ssi-controller = <&sai2>;
+		nxp,audio-codec = <&tfa98xx_left &tfa98xx_right>;
+		clocks = <&clk IMX8MQ_CLK_SAI2_DIV>;
+		nxp,audio-routing =
+			"Speaker", "OUTL",
+			"DMIC1", "Mic",
+			"DMIC2", "Mic",
+			"DMIC3", "Mic",
+			"DMIC4", "Mic";
+	};
+
 	sound-hdmi {
 		compatible = "fsl,imx-audio-cdnhdmi";
 		model = "imx-audio-hdmi";
@@ -389,6 +404,12 @@
 				MX8MQ_IOMUXC_GPIO1_IO14_PWM3_OUT		0x16
 			>;
 		};
+		pinctrl_tfa98xx: tfa98xx_ctrlgrp {
+			fsl,pins = <
+				MX8MQ_IOMUXC_GPIO1_IO08_GPIO1_IO8	0x19 /* RST */
+				MX8MQ_IOMUXC_SAI1_TXFS_GPIO4_IO10	0x19 /* INT */
+			>;
+		};
 	};
 };
 
@@ -621,10 +642,23 @@
 };
 
 &i2c2 {
-	clock-frequency = <100000>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c2>;
 	status = "okay";
+
+	tfa98xx_left: tfa98xx_left@34 {
+		compatible = "nxp,tfa98xx";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_tfa98xx>;
+		reg = <0x34>;
+		reset-gpio = <&gpio1 8 GPIO_ACTIVE_HIGH>;
+		irq-gpio = <&gpio4 10 GPIO_ACTIVE_HIGH>;
+	};
+
+	tfa98xx_right: tfa98xx_right@35 {
+		compatible = "nxp,tfa98xx";
+		reg = <0x35>;
+	};
 };
 
 &uart1 { /* console */
