@@ -121,12 +121,6 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_wifi_ctrl>;
 
-		gpio_otg_ss_sel {
-			label = "OTG_SS_SEL";
-			gpios = <&gpio3 5 GPIO_ACTIVE_HIGH>;
-			dir   = "out";
-		};
-
 		gpio_wifi_wl_reg_on {
 			label = "WL_REG_ON";
 			gpios = <&gpio1 3 GPIO_ACTIVE_LOW>;
@@ -156,15 +150,9 @@
 			>;
 		};
 
-		pinctrl_otg_id: otgidgrp {
-			fsl,pins = <
-				MX8MQ_IOMUXC_GPIO1_IO10_GPIO1_IO10		0x41   /* USB OTG ID */
-			>;
-		};
-
 		pinctrl_csi1: csi1grp {
 			fsl,pins = <
-				MX8MQ_IOMUXC_NAND_DATA01_GPIO3_IO7		0x19   /* CSI P1 PWDN */
+				MX8MQ_IOMUXC_UART3_RXD_GPIO5_IO26		0x19   /* CSI P1 PWDN */
 				MX8MQ_IOMUXC_GPIO1_IO12_GPIO1_IO12		0x19   /* CSI nRST */
 				MX8MQ_IOMUXC_GPIO1_IO15_CCMSRCGPCMIX_CLKO2	0x59
 			>;
@@ -344,9 +332,15 @@
 			>;
 		};
 
-		pinctrl_otg_ss_sel: otg_ss_sel_ctrlgrp {
+		pinctrl_tusb320_irq: tusb320_irqgrp {
 			fsl,pins = <
-				MX8MQ_IOMUXC_NAND_CLE_GPIO3_IO5		0x16
+				MX8MQ_IOMUXC_NAND_DATA00_GPIO3_IO6	0x41
+			>;
+		};
+
+		pinctrl_typec_ss_sel: typec_ss_selgrp {
+			fsl,pins = <
+				MX8MQ_IOMUXC_NAND_CLE_GPIO3_IO5		0x19
 			>;
 		};
 	};
@@ -380,12 +374,24 @@
 	pinctrl-0 = <&pinctrl_i2c1>;
 	status = "okay";
 
+	typec_tusb320:tusb320@47 {
+		compatible = "ti,tusb320";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_tusb320_irq &pinctrl_typec_ss_sel>;
+		reg = <0x47>;
+		vbus-supply = <&reg_usb_otg_vbus>;
+		ss-sel-gpios = <&gpio3 5 GPIO_ACTIVE_HIGH>;
+		tusb320,int-gpio = <&gpio3 6 GPIO_ACTIVE_LOW>;
+		tusb320,select-mode = <0>;
+		tusb320,dfp-power = <0>;
+	};
+
 	pmic: bd71837@4b {
 		reg = <0x4b>;
 		compatible = "rohm,bd71837";
-		/* PMIC BD71837 PMIC_nINT GPIO1_IO12 */
+		/* PMIC BD71837 PMIC_nINT GPIO1_IO3 */
 		pinctrl-0 = <&pinctrl_pmic>;
-		gpio_intr = <&gpio1 12 GPIO_ACTIVE_LOW>;
+		gpio_intr = <&gpio1 3 GPIO_ACTIVE_LOW>;
 
 		bd71837,pmic-buck1-uses-i2c-dvs;
 		bd71837,pmic-buck1-dvs-voltage = <900000>, <850000>, <800000>; /* VDD_SOC: Run-Idle-Suspend */
@@ -556,7 +562,7 @@
 		assigned-clock-parents = <&clk IMX8MQ_SYS2_PLL_200M>;
 		assigned-clock-rates = <0>, <20000000>;
 		csi_id = <0>;
-		pwn-gpios = <&gpio3 7 GPIO_ACTIVE_LOW>;
+		pwn-gpios = <&gpio5 26 GPIO_ACTIVE_LOW>;
 		rst-gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
 		mclk = <20000000>;
 		mclk_source = <0>;
@@ -621,7 +627,7 @@
 };
 
 &usb_dwc3_0 {
-	vbus-supply = <&reg_usb_otg_vbus>;
+	extcon = <&typec_tusb320>;
 	dr_mode = "otg";
 	status = "okay";
 };
