@@ -123,13 +123,7 @@
 
 		gpio_wifi_wl_reg_on {
 			label = "WL_REG_ON";
-			gpios = <&gpio1 3 GPIO_ACTIVE_LOW>;
-			dir   = "out";
-		};
-
-		gpio_wifi_pwr_en {
-			label = "WIFI_PWR_EN";
-			gpios = <&gpio3 15 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio3 24 GPIO_ACTIVE_LOW>;
 			dir   = "out";
 		};
 	};
@@ -158,9 +152,11 @@
 			>;
 		};
 
-		pinctrl_enet_3v3: enet3v3grp {
+		pinctrl_csi2: csi2grp {
 			fsl,pins = <
-				MX8MQ_IOMUXC_GPIO1_IO00_GPIO1_IO0		0x19
+				MX8MQ_IOMUXC_UART3_TXD_GPIO5_IO27		0x19   /* CSI P2 PWDN */
+				MX8MQ_IOMUXC_GPIO1_IO12_GPIO1_IO12		0x19   /* CSI nRST */
+				MX8MQ_IOMUXC_GPIO1_IO15_CCMSRCGPCMIX_CLKO2	0x59
 			>;
 		};
 
@@ -195,6 +191,13 @@
 			fsl,pins = <
 				MX8MQ_IOMUXC_I2C2_SCL_I2C2_SCL			0x4000007f
 				MX8MQ_IOMUXC_I2C2_SDA_I2C2_SDA			0x4000007f
+			>;
+		};
+
+		pinctrl_i2c3: i2c3grp {
+			fsl,pins = <
+				MX8MQ_IOMUXC_I2C3_SCL_I2C3_SCL			0x4000007f
+				MX8MQ_IOMUXC_I2C3_SDA_I2C3_SDA			0x4000007f
 			>;
 		};
 
@@ -327,20 +330,13 @@
 
 		pinctrl_wifi_ctrl: wifi_ctrlgrp {
 			fsl,pins = <
-				MX8MQ_IOMUXC_NAND_ALE_GPIO3_IO0		0x19 /* WL_REG_ON */
-				MX8MQ_IOMUXC_NAND_RE_B_GPIO3_IO15	0x19 /* WIFI_PWR_EN */
+				MX8MQ_IOMUXC_SAI5_RXD3_GPIO3_IO24		0x19 /* WL_REG_ON */
 			>;
 		};
 
 		pinctrl_tusb320_irq: tusb320_irqgrp {
 			fsl,pins = <
-				MX8MQ_IOMUXC_NAND_DATA00_GPIO3_IO6	0x41
-			>;
-		};
-
-		pinctrl_typec_ss_sel: typec_ss_selgrp {
-			fsl,pins = <
-				MX8MQ_IOMUXC_NAND_CLE_GPIO3_IO5		0x19
+				MX8MQ_IOMUXC_NAND_RE_B_GPIO3_IO15	0x41
 			>;
 		};
 	};
@@ -348,9 +344,8 @@
 
 &fec1 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_fec1 &pinctrl_enet_3v3>;
+	pinctrl-0 = <&pinctrl_fec1>;
 	phy-mode = "rgmii-id";
-	pinctrl-assert-gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
 	phy-handle = <&ethphy0>;
 	fsl,magic-packet;
 	status = "okay";
@@ -373,18 +368,6 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c1>;
 	status = "okay";
-
-	typec_tusb320:tusb320@47 {
-		compatible = "ti,tusb320";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_tusb320_irq &pinctrl_typec_ss_sel>;
-		reg = <0x47>;
-		vbus-supply = <&reg_usb_otg_vbus>;
-		ss-sel-gpios = <&gpio3 5 GPIO_ACTIVE_HIGH>;
-		tusb320,int-gpio = <&gpio3 6 GPIO_ACTIVE_LOW>;
-		tusb320,select-mode = <0>;
-		tusb320,dfp-power = <0>;
-	};
 
 	pmic: bd71837@4b {
 		reg = <0x4b>;
@@ -548,6 +531,24 @@
 			};
 		};
 	};
+};
+
+&i2c2 {
+	clock-frequency = <100000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_i2c2>;
+	status = "okay";
+
+	typec_tusb320:tusb320@67 {
+		compatible = "ti,tusb320";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_tusb320_irq>;
+		reg = <0x67>;
+		vbus-supply = <&reg_usb_otg_vbus>;
+		tusb320,int-gpio = <&gpio3 15 GPIO_ACTIVE_LOW>;
+		tusb320,select-mode = <0>;
+		tusb320,dfp-power = <0>;
+	};
 
 	ov5645_mipi: ov5645_mipi@3c {
 		compatible = "ovti,ov5645_mipi";
@@ -574,11 +575,35 @@
 	};
 };
 
-&i2c2 {
+&i2c3 {
 	clock-frequency = <100000>;
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_i2c2>;
+	pinctrl-0 = <&pinctrl_i2c3>;
 	status = "okay";
+
+	ov5645_mipi2: ov5645_mipi2@3c {
+		compatible = "ovti,ov5645_mipi";
+		reg = <0x3c>;
+		status = "okay";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_csi2>;
+		clocks = <&clk IMX8MQ_CLK_CLKO2_DIV>;
+		clock-names = "csi_mclk";
+		assigned-clocks = <&clk IMX8MQ_CLK_CLKO2_SRC>,
+				  <&clk IMX8MQ_CLK_CLKO2_DIV>;
+		assigned-clock-parents = <&clk IMX8MQ_SYS2_PLL_200M>;
+		assigned-clock-rates = <0>, <20000000>;
+		csi_id = <1>;
+		pwn-gpios = <&gpio5 27 GPIO_ACTIVE_HIGH>;
+		rst-gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+		mclk = <20000000>;
+		mclk_source = <0>;
+		port {
+			ov5645_mipi2_ep: endpoint {
+				remote-endpoint = <&mipi2_sensor_ep>;
+			};
+		};
+	};
 };
 
 &uart1 { /* console */
@@ -737,6 +762,18 @@
 	};
 };
 
+&csi2_bridge {
+	fsl,mipi-mode;
+	fsl,two-8bit-sensor-mode;
+	status = "okay";
+
+	port {
+		csi2_ep: endpoint {
+			remote-endpoint = <&csi2_mipi_ep>;
+		};
+	};
+};
+
 &mipi_csi_1 {
 	#address-cells = <1>;
 	#size-cells = <0>;
@@ -752,3 +789,20 @@
 		};
 	};
 };
+
+&mipi_csi_2 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "okay";
+	port {
+		mipi2_sensor_ep: endpoint1 {
+			remote-endpoint = <&ov5645_mipi2_ep>;
+			data-lanes = <1 2>;
+		};
+
+		csi2_mipi_ep: endpoint2 {
+			remote-endpoint = <&csi2_ep>;
+		};
+	};
+};
+
