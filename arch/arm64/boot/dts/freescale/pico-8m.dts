@@ -116,14 +116,21 @@
 		};
 	};
 
+
 	gpio-edm {
 		compatible = "gpio-edm";
 		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_wifi_ctrl>;
+		pinctrl-0 = <&pinctrl_wifi_ctrl &pinctrl_bt_ctrl>;
 
-		gpio_wifi_wl_reg_on {
+		wl_reg_on {
 			label = "WL_REG_ON";
 			gpios = <&gpio3 24 GPIO_ACTIVE_LOW>;
+			dir   = "out";
+		};
+
+		bt_on {
+			label = "BT_ON";
+			gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
 			dir   = "out";
 		};
 	};
@@ -331,6 +338,12 @@
 		pinctrl_wifi_ctrl: wifi_ctrlgrp {
 			fsl,pins = <
 				MX8MQ_IOMUXC_SAI5_RXD3_GPIO3_IO24		0x19 /* WL_REG_ON */
+			>;
+		};
+
+		pinctrl_bt_ctrl: bt_ctrlgrp {
+			fsl,pins = <
+				MX8MQ_IOMUXC_SAI5_RXD0_GPIO3_IO21		0x19 /* BT_ON */
 			>;
 		};
 
@@ -805,4 +818,3 @@
 		};
 	};
 };
-
