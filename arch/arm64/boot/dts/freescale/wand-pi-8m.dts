@@ -220,6 +220,15 @@
 			>;
 		};
 
+		pinctrl_uart4: uart4grp {
+			fsl,pins = <
+				MX8MQ_IOMUXC_ECSPI2_MOSI_UART4_DCE_TX		0x49
+				MX8MQ_IOMUXC_ECSPI2_SCLK_UART4_DCE_RX		0x49
+				MX8MQ_IOMUXC_ECSPI2_MISO_UART4_DCE_CTS_B	0x49
+				MX8MQ_IOMUXC_ECSPI2_SS0_UART4_DCE_RTS_B		0x49
+			>;
+		};
+
 		pinctrl_usdhc1: usdhc1grp {
 			fsl,pins = <
 				MX8MQ_IOMUXC_SD1_CLK_USDHC1_CLK			0x83
@@ -605,6 +614,15 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart2>;
 	assigned-clocks = <&clk IMX8MQ_CLK_UART2_SRC>;
+	assigned-clock-parents = <&clk IMX8MQ_CLK_25M>;
+	fsl,uart-has-rtscts;
+	status = "okay";
+};
+
+&uart4 { /* 2nd console, CLIX connector */
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart4>;
+	assigned-clocks = <&clk IMX8MQ_CLK_UART4_SRC>;
 	assigned-clock-parents = <&clk IMX8MQ_CLK_25M>;
 	fsl,uart-has-rtscts;
 	status = "okay";
