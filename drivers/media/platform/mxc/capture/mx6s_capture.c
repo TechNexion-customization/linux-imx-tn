@@ -1184,6 +1184,7 @@ static int mx6s_csi_open(struct file *file)
 
 	mutex_unlock(&csi_dev->lock);
 
+	dev_warn(csi_dev->dev, "CSI dev coherent is %d \n", csi_dev->dev->archdata.dma_coherent);
 	return ret;
 unlock:
 	mutex_unlock(&csi_dev->lock);
