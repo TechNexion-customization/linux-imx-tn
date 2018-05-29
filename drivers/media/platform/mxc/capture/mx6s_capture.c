@@ -57,7 +57,7 @@
 #define MX6S_CAM_VERSION "0.0.1"
 #define MX6S_CAM_DRIVER_DESCRIPTION "i.MX6S_CSI"
 
-#define MAX_VIDEO_MEM 64
+#define MAX_VIDEO_MEM 128
 
 /* reset values */
 #define CSICR1_RESET_VAL	0x40000800
@@ -1004,6 +1004,8 @@ static void mx6s_csi_frame_done(struct mx6s_csi_dev *csi_dev,
 			       queue);
 
 	if (ibuf->discard) {
+
+	        pr_debug("csi buffer full!\n");
 		/*
 		 * Discard buffer must not be returned to user space.
 		 * Just return it to the discard queue.
@@ -1036,8 +1038,18 @@ static void mx6s_csi_frame_done(struct mx6s_csi_dev *csi_dev,
 		to_vb2_v4l2_buffer(vb)->sequence = csi_dev->frame_count;
 		if (err)
 			vb2_buffer_done(vb, VB2_BUF_STATE_ERROR);
-		else
+		else {
 			vb2_buffer_done(vb, VB2_BUF_STATE_DONE);
+#ifdef DEBUG
+			{
+			    static int _count;
+			    if(_count % 30 == 0)
+				pr_debug("%d\n", _count);
+			    _count++;
+			}
+#endif
+
+		}
 	}
 
 	csi_dev->frame_count++;
