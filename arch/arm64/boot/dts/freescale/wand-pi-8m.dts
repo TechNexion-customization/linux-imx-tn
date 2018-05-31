@@ -379,6 +379,11 @@
 				MX8MQ_IOMUXC_ECSPI1_SS0_GPIO5_IO9	0x19
 			>;
 		};
+		pinctrl_pwm2: pwm2_grp {
+			fsl,pins = <
+				MX8MQ_IOMUXC_GPIO1_IO13_PWM2_OUT		0x16
+			>;
+		};
 		pinctrl_pwm3: pwm3_grp {
 			fsl,pins = <
 				MX8MQ_IOMUXC_GPIO1_IO14_PWM3_OUT		0x16
@@ -748,6 +753,12 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_wdog>;
 	fsl,ext-reset-output;
+	status = "okay";
+};
+
+&pwm2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_pwm2>;
 	status = "okay";
 };
 
