@@ -27,10 +27,6 @@
 	status = "disabled";
 };
 
-&hdmi_cec {
-	status = "disabled";
-};
-
 &dcss {
 	status = "okay";
 	disp-dev = "mipi_disp";
