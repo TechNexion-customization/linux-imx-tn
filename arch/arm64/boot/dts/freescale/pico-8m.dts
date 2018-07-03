@@ -156,6 +156,10 @@
 	};
 };
 
+&resmem {
+	/delete-node/ linux,cma;
+};
+
 &clk {
 	assigned-clocks = <&clk IMX8MQ_AUDIO_PLL1>;
 	assigned-clock-rates = <786432000>;
