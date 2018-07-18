@@ -679,6 +679,13 @@
 			};
 		};
 	};
+
+	at24@51 {
+		compatible = "at24,24c02";
+		pagesize = <8>;
+		reg = <0x57>;
+		status = "okay";
+	};
 };
 
 &uart1 { /* console */
