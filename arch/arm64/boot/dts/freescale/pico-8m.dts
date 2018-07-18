@@ -177,7 +177,7 @@
 
 		pinctrl_csi1: csi1grp {
 			fsl,pins = <
-				MX8MQ_IOMUXC_UART3_RXD_GPIO5_IO26		0x19   /* CSI P1 PWDN */
+				MX8MQ_IOMUXC_NAND_CE1_B_GPIO3_IO2		0x19   /* CSI P1 PWDN */
 				MX8MQ_IOMUXC_GPIO1_IO12_GPIO1_IO12		0x19   /* CSI nRST */
 				MX8MQ_IOMUXC_GPIO1_IO15_CCMSRCGPCMIX_CLKO2	0x59
 			>;
@@ -185,9 +185,8 @@
 
 		pinctrl_csi2: csi2grp {
 			fsl,pins = <
-				MX8MQ_IOMUXC_UART3_TXD_GPIO5_IO27		0x19   /* CSI P2 PWDN */
-				MX8MQ_IOMUXC_GPIO1_IO12_GPIO1_IO12		0x19   /* CSI nRST */
-				MX8MQ_IOMUXC_GPIO1_IO15_CCMSRCGPCMIX_CLKO2	0x59
+				MX8MQ_IOMUXC_ECSPI1_MOSI_GPIO5_IO7		0x19   /* CSI P2 PWDN */
+				MX8MQ_IOMUXC_NAND_READY_B_GPIO3_IO16		0x19   /* CSI nRST */
 			>;
 		};
 
@@ -639,7 +638,7 @@
 		assigned-clock-parents = <&clk IMX8MQ_SYS2_PLL_200M>;
 		assigned-clock-rates = <0>, <20000000>;
 		csi_id = <0>;
-		pwn-gpios = <&gpio5 26 GPIO_ACTIVE_LOW>;
+		pwn-gpios = <&gpio3 2 GPIO_ACTIVE_LOW>;
 		rst-gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
 		mclk = <20000000>;
 		mclk_source = <0>;
@@ -670,8 +669,8 @@
 		assigned-clock-parents = <&clk IMX8MQ_SYS2_PLL_200M>;
 		assigned-clock-rates = <0>, <20000000>;
 		csi_id = <1>;
-		pwn-gpios = <&gpio5 27 GPIO_ACTIVE_HIGH>;
-		rst-gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+		pwn-gpios = <&gpio5 7 GPIO_ACTIVE_HIGH>;
+		rst-gpios = <&gpio3 16 GPIO_ACTIVE_HIGH>;
 		mclk = <20000000>;
 		mclk_source = <0>;
 		port {
