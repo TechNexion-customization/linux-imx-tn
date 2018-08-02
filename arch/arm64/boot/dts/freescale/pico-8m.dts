@@ -175,7 +175,7 @@
 	gpio-edm {
 		compatible = "gpio-edm";
 		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_wifi_ctrl &pinctrl_bt_ctrl>;
+		pinctrl-0 = <&pinctrl_wifi_ctrl &pinctrl_bt_ctrl &pinctrl_key_gpio>;
 
 		wl_reg_on {
 			label = "WL_REG_ON";
@@ -187,6 +187,46 @@
 			label = "BT_ON";
 			gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
 			dir   = "out";
+		};
+		key_prev {
+			label = "KEY_PREV";
+			gpios = <&gpio3 3 GPIO_ACTIVE_LOW>;
+			dir   = "in";
+		};
+		key_play {
+			label = "KEY_PLAY";
+			gpios = <&gpio5 4 GPIO_ACTIVE_LOW>;
+			dir   = "in";
+		};
+		key_next {
+			label = "KEY_NEXT";
+			gpios = <&gpio3 16 GPIO_ACTIVE_LOW>;
+			dir   = "in";
+		};
+		key_up {
+			label = "KEY_UP";
+			gpios = <&gpio3 5 GPIO_ACTIVE_LOW>;
+			dir   = "in";
+		};
+		key_down {
+			label = "KEY_DOWN";
+			gpios = <&gpio3 4 GPIO_ACTIVE_LOW>;
+			dir   = "in";
+		};
+		key_mute {
+			label = "KEY_MUTE";
+			gpios = <&gpio3 0 GPIO_ACTIVE_LOW>;
+			dir   = "in";
+		};
+		key_pair {
+			label = "KEY_PAIR";
+			gpios = <&gpio5 9 GPIO_ACTIVE_LOW>;
+			dir   = "in";
+		};
+		key_act {
+			label = "KEY_ACT";
+			gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
+			dir   = "in";
 		};
 	};
 };
@@ -411,6 +451,19 @@
 		pinctrl_bt_ctrl: bt_ctrlgrp {
 			fsl,pins = <
 				MX8MQ_IOMUXC_SAI5_RXD0_GPIO3_IO21		0x19 /* BT_ON */
+			>;
+		};
+
+		pinctrl_key_gpio: key_ctrlgrp {
+			fsl,pins = <
+				MX8MQ_IOMUXC_NAND_CE2_B_GPIO3_IO3		0x41 /* KEY_PREV */
+				MX8MQ_IOMUXC_SPDIF_RX_GPIO5_IO4			0x41 /* KEY_PLAY */
+				MX8MQ_IOMUXC_NAND_READY_B_GPIO3_IO16		0x41 /* KEY_NEXT */
+				MX8MQ_IOMUXC_NAND_CLE_GPIO3_IO5			0x41 /* KEY_UP */
+				MX8MQ_IOMUXC_NAND_CE3_B_GPIO3_IO4		0x41 /* KEY_DOWN */
+				MX8MQ_IOMUXC_NAND_ALE_GPIO3_IO0			0x41 /* KEY_MUTE */
+				MX8MQ_IOMUXC_ECSPI1_SS0_GPIO5_IO9		0x41 /* KEY_PAIR */
+				MX8MQ_IOMUXC_SPDIF_TX_GPIO5_IO3			0x41 /* KEY_ACT */
 			>;
 		};
 
@@ -729,7 +782,7 @@
 	ov5645_mipi2: ov5645_mipi2@3c {
 		compatible = "ovti,ov5645_mipi";
 		reg = <0x3c>;
-		status = "okay";
+		status = "disabled";
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_csi2>;
 		clocks = <&clk IMX8MQ_CLK_CLKO2_DIV>;
