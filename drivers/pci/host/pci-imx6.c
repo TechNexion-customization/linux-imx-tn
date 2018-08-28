@@ -1079,7 +1079,7 @@ static void imx_pcie_init_phy(struct imx_pcie *imx_pcie)
 
 		/* pcie phy ref clock select; 1? internal pll : external osc */
 		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
-				BIT(5), 0);
+				BIT(5), imx_pcie->osc_refclk_in ? 0 : BIT(5));
 	} else if (imx_pcie->variant == IMX6SX) {
 		/* Force PCIe PHY reset */
 		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR5,
