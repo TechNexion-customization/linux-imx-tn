@@ -89,16 +89,27 @@
 		gpio = <&gpio1 6 0>;
 	};
 
-	reg_brcm: regulator-brcm {
+	wlreg_on: wlreg_on {
 		compatible = "regulator-fixed";
-		enable-active-high;
-		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_brcm_reg>;
-		regulator-name = "brcm_reg";
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
-		startup-delay-us = <200000>;
+		regulator-name = "wlreg_on";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_wifi_ctrl>;
+		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		regulator-always-on;
+	};
+
+	bt_on: bt_on {
+		compatible = "regulator-fixed";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-name = "bt_on";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_bt_ctrl>;
+		gpio = <&gpio5 9 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
 		regulator-always-on;
 	};
 
@@ -317,7 +328,7 @@
 	non-removable;
 	keep-power-in-suspend;
 	wakeup-source;
-	vmmc-supply = <&reg_brcm>;
+	vmmc-supply = <&wlreg_on>;
 	status = "okay";
 };
 
@@ -341,13 +352,6 @@
 			MX6UL_PAD_UART1_CTS_B__GPIO1_IO18	0x79	/* GPIO_P34 */
 			MX6UL_PAD_UART4_RX_DATA__GPIO1_IO29	0x79	/* GPIO_P44 */
 			MX6UL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x79	/* GPIO_P48 */
-		>;
-	};
-
-	pinctrl_brcm_reg: brcmreggrp {
-		fsl,pins = <
-			MX6UL_PAD_NAND_DATA06__GPIO4_IO08	0x0000	/* WL_REG_ON */
-			MX6UL_PAD_NAND_DATA04__GPIO4_IO06	0x0000	/* WL_HOST_WAKE */
 		>;
 	};
 
@@ -537,6 +541,21 @@
 	pinctrl_wdog: wdoggrp {
 		fsl,pins = <
 			MX6UL_PAD_LCD_RESET__WDOG1_WDOG_ANY    0x30b0
+		>;
+	};
+
+	pinctrl_wifi_ctrl: wifi_ctrlgrp {
+		fsl,pins = <
+			MX6UL_PAD_NAND_DATA06__GPIO4_IO08	0x79 /* wifi-reg-on */
+			MX6UL_PAD_NAND_DATA04__GPIO4_IO06	0x79 /* wifi-host-wake */
+		>;
+	};
+
+	pinctrl_bt_ctrl: bt_ctrlgrp {
+		fsl,pins = <
+			MX6UL_PAD_SNVS_TAMPER8__GPIO5_IO08	0x79 /* sdio-reg-on */
+			MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09	0x79 /* bluetooth-wake */
+			MX6UL_PAD_NAND_DATA05__GPIO4_IO07	0x79 /* bluetooth-host-wake */
 		>;
 	};
 };
