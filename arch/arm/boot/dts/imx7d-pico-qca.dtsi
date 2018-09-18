@@ -61,24 +61,6 @@
 		status = "okay";
 	};
 
-	bcmdhd_wlan_0: bcmdhd_wlan@0 {
-		compatible = "android,bcmdhd_wlan";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_wifi_ctrl>;
-		gpios = <&gpio4 19 0>;    /* WL_HOST_WAKE */
-		wlreg_on-supply = <&wlreg_on>;
-		status = "okay";
-	};
-
-	bt_rfkill {
-		compatible = "net,rfkill-bcm43xx";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_bt_ctrl>;
-		name = "bt_rfkill";
-		type = <2>;     /* bluetooth */
-		bt_rfkill_reset-gpios = <&gpio4 18 0>;
-	};
-
 	pxp_v4l2_out {
 		compatible = "fsl,imx7d-pxp-v4l2", "fsl,imx6sx-pxp-v4l2", "fsl,imx6sl-pxp-v4l2";
 		status = "okay";
@@ -137,12 +119,38 @@
 			regulator-max-microvolt = <3300000>;
 		};
 
-		wlreg_on: fixedregulator@100 {
+		wlreg_on: wlreg_on {
 			compatible = "regulator-fixed";
 			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
 			regulator-name = "wlreg_on";
+			pinctrl-names = "default";
+			pinctrl-0 = <&pinctrl_wifi_ctrl>;
 			gpio = <&gpio4 16 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-always-on;
+		};
+
+		wifi_pwr_on: wifi_pwr_on {
+			compatible = "regulator-fixed";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-name = "wifi_pwr_on";
+			pinctrl-names = "default";
+			pinctrl-0 = <&pinctrl_wifi_pwr_on>;
+			gpio = <&gpio2 29 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-always-on;
+		};
+
+		bt_on: bt_on {
+			compatible = "regulator-fixed";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-name = "bt_on";
+			pinctrl-names = "default";
+			pinctrl-0 = <&pinctrl_bt_ctrl>;
+			gpio = <&gpio4 17 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
 			regulator-always-on;
 		};
@@ -156,16 +164,6 @@
 			gpio = <&gpio1 6 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
 			regulator-boot-on;
-		};
-	};
-
-	gpio-edm {
-		compatible = "gpio-edm";
-
-		wifi_on {
-			label = "wifi_on";
-			gpios = <&gpio2 29 1>;
-			dir   = "out";
 		};
 	};
 
@@ -203,7 +201,6 @@
 				MX7D_PAD_EPDC_DATA12__GPIO2_IO12	0x59 /* PICO_P42 */
 				MX7D_PAD_EPDC_DATA13__GPIO2_IO13	0x59 /* PICO_P44 */
 				MX7D_PAD_EPDC_DATA07__GPIO2_IO7		0x59 /* PICO_P48 */
-				MX7D_PAD_EPDC_BDR1__GPIO2_IO29		0x59 /* WIFI POWER */
 			>;
 		};
 
@@ -482,9 +479,15 @@
 			>;
 		};
 
+		pinctrl_wifi_pwr_on: wifi_pwr_on_ctrlgrp {
+			fsl,pins = <
+				MX7D_PAD_EPDC_BDR1__GPIO2_IO29		0x59 /* wifi power */
+			>;
+		};
+
 		pinctrl_bt_ctrl: bt_ctrlgrp {
 			fsl,pins = <
-				MX7D_PAD_ECSPI1_MISO__GPIO4_IO18       0x55 /* bluetooth-reg-on */
+				MX7D_PAD_ECSPI1_MISO__GPIO4_IO18       0x55 /* sdio-reg-on */
 				MX7D_PAD_ECSPI1_MOSI__GPIO4_IO17       0x55 /* bluetooth-wake */
 				MX7D_PAD_SD2_RESET_B__GPIO5_IO11       0x55 /* bluetooth-host-wake */
 			>;
