@@ -582,6 +582,7 @@ dtb-$(CONFIG_SOC_IMX7D) += \
 	imx7d-pico_nymph.dtb \
 	imx7d-pico_hobbit.dtb \
 	imx7d-pico_pi.dtb \
+	imx7d-pico_pi-qca.dtb \
 	imx7d-pico_pi-m4.dtb \
 	imx7d-tep1.dtb \
 	imx7d-sdb.dtb \
