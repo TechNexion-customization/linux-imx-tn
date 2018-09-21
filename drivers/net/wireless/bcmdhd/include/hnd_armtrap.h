@@ -1,5 +1,5 @@
 /*
- * HNDRTE arm trap handling.
+ * HND arm trap handling.
  *
  * Copyright (C) 1999-2016, Broadcom Corporation
  * 
@@ -21,11 +21,14 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: hndrte_armtrap.h 261365 2011-05-24 20:42:23Z $
+ *
+ * <<Broadcom-WL-IPTag/Open:>>
+ *
+ * $Id: hnd_armtrap.h 514727 2014-11-12 03:02:48Z $
  */
 
-#ifndef	_hndrte_armtrap_h
-#define	_hndrte_armtrap_h
+#ifndef	_hnd_armtrap_h_
+#define	_hnd_armtrap_h_
 
 
 /* ARM trap handling */
@@ -55,6 +58,7 @@
 #define	TR_PC		TR_REG(15)
 
 #define	TRAP_T_SIZE	80
+#define ASSERT_TRAP_SVC_NUMBER	255
 
 #ifndef	_LANGUAGE_ASSEMBLY
 
@@ -85,4 +89,4 @@ typedef struct _trap_struct {
 
 #endif	/* !_LANGUAGE_ASSEMBLY */
 
-#endif	/* _hndrte_armtrap_h */
+#endif	/* _hnd_armtrap_h_ */

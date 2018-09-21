@@ -21,7 +21,10 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: bcmspibrcm.c 662541 2016-10-28 03:22:57Z $
+ *
+ * <<Broadcom-WL-IPTag/Open:>>
+ *
+ * $Id: bcmspibrcm.c 591086 2015-10-07 02:51:01Z $
  */
 
 #define HSMODE
@@ -199,13 +202,11 @@ extern SDIOH_API_RC
 sdioh_interrupt_register(sdioh_info_t *sd, sdioh_cb_fn_t fn, void *argh)
 {
 	sd_trace(("%s: Entering\n", __FUNCTION__));
-#if !defined(OOB_INTR_ONLY) || defined(OOB_PARAM)
-	OOB_PARAM_IF(dhd_get_oob_disable(argh)) {
-		sd->intr_handler = fn;
-		sd->intr_handler_arg = argh;
-		sd->intr_handler_valid = TRUE;
-	}
-#endif /* !defined(OOB_INTR_ONLY) || defined(OOB_PARAM) */
+#if !defined(OOB_INTR_ONLY)
+	sd->intr_handler = fn;
+	sd->intr_handler_arg = argh;
+	sd->intr_handler_valid = TRUE;
+#endif /* !defined(OOB_INTR_ONLY) */
 	return SDIOH_API_RC_SUCCESS;
 }
 
@@ -213,13 +214,11 @@ extern SDIOH_API_RC
 sdioh_interrupt_deregister(sdioh_info_t *sd)
 {
 	sd_trace(("%s: Entering\n", __FUNCTION__));
-#if !defined(OOB_INTR_ONLY) || defined(OOB_PARAM)
-	OOB_PARAM_IF(sd->intr_handler_valid) {
-		sd->intr_handler_valid = FALSE;
-		sd->intr_handler = NULL;
-		sd->intr_handler_arg = NULL;
-	}
-#endif /* !defined(OOB_INTR_ONLY) || defined(OOB_PARAM) */
+#if !defined(OOB_INTR_ONLY)
+	sd->intr_handler_valid = FALSE;
+	sd->intr_handler = NULL;
+	sd->intr_handler_arg = NULL;
+#endif /* !defined(OOB_INTR_ONLY) */
 	return SDIOH_API_RC_SUCCESS;
 }
 
@@ -1287,8 +1286,14 @@ bcmspi_host_device_init_adapt(sdioh_info_t *sd)
 			OSL_DELAY(1000);
 		}
 
+#if defined(CHANGE_SPI_INTR_POLARITY_ACTIVE_HIGH)
+		/* Change to host controller intr-polarity of active-high */
+		wrregdata |= INTR_POLARITY;
+#else
 		/* Change to host controller intr-polarity of active-low */
 		wrregdata &= ~INTR_POLARITY;
+#endif /* CHANGE_SPI_INTR_POLARITY_ACTIVE_HIGH */
+
 		sd_trace(("(we are still in 16bit mode) 32bit Write LE reg-ctrl-data = 0x%x\n",
 		        wrregdata));
 		/* Change to 32bit mode */

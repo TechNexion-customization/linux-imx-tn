@@ -22,11 +22,20 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: linuxver.h 656961 2016-08-30 13:20:42Z $
+ *
+ * <<Broadcom-WL-IPTag/Open:>>
+ *
+ * $Id: linuxver.h 604758 2015-12-08 12:01:08Z $
  */
 
 #ifndef _linuxver_h_
 #define _linuxver_h_
+
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
+#endif
 
 #include <typedefs.h>
 #include <linux/version.h>
@@ -39,11 +48,11 @@
 #include <linux/autoconf.h>
 #endif
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0)) */
-#include <linux/module.h>
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 1, 0))
 #include <linux/kconfig.h>
 #endif
+#include <linux/module.h>
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 3, 0))
 /* __NO_VERSION__ must be defined for all linkables except one in 2.2 */
@@ -750,5 +759,16 @@ not match our unaligned address for < 2.6.24
 #define kfifo_out_spinlocked(a, b, c, d)	kfifo_out_locked(a, b, c, d)
 #define kfifo_esize(a)				1
 #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 33)) */
+
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#pragma GCC diagnostic pop
+#endif
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 9, 0))
+static inline struct inode *file_inode(const struct file *f)
+{
+	return f->f_dentry->d_inode;
+}
+#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3, 9, 0)) */
 
 #endif /* _linuxver_h_ */
