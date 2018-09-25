@@ -16,7 +16,7 @@
 #include "imx6qdl-pico-qca.dtsi"
 #include "baseboard_pico_pi.dtsi"
 / {
-	model = "TechNexion PICO-IMX6 DualLite/Solo with QCA WIFI/BT and PI baseboard";
+	model = "TechNexion PICO-IMX6 DualLite/Solo with QCA WLAN module and PI baseboard";
 	compatible = "fsl,pico-imx6dl", "fsl,imx6dl";
 
 	sound-hdmi {
