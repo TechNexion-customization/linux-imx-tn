@@ -14,24 +14,6 @@
 
 #include "fsl-imx8mq-evk.dts"
 
-/ {
-	display-subsystem {
-		status = "disabled";
-	};
-};
-
-&irqsteer_dcss {
-	status = "disabled";
-};
-
-&dcss {
-	status = "disabled";
-};
-
-&hdmi {
-	status = "disabled";
-};
-
 &lcdif {
 	status = "okay";
 
@@ -43,9 +25,7 @@
 	assigned-clock-rate = <120000000>,
 			      <0>,
 			      <599999999>;
-	/* important to overwrite max-res otherwise DRM lcdif will fail to find a suitable connector */
 	max-res = <4096>, <4096>;
-
 	port@0 {
 		lcdif_mipi_dsi: mipi-dsi-endpoint {
 			remote-endpoint = <&mipi_dsi_in>;
@@ -84,7 +64,7 @@
 
 &mipi_dsi_bridge {
 	status = "okay";
-
+	
 	panel@0 {
 		compatible = "raydium,rm67191";
 		reg = <0>;
@@ -99,10 +79,10 @@
 			};
 		};
 	};
-
+	
 	port@1 {
-		mipi_dsi_bridge_out: endpoint {
-			remote-endpoint = <&panel1_in>;
+		mipi_dsi_bridge_out: mipi-dsi-endpoint {
+				remote-endpoint = <&panel1_in>;
 		};
 	};
 };
