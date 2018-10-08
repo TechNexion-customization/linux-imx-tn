@@ -345,6 +345,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
 	imx6dl-nit6xlite.dtb \
 	imx6dl-nitrogen6x.dtb \
 	imx6dl-phytec-pbab01.dtb \
+	imx6dl-pico-qca_dwarf.dtb \
 	imx6dl-pico-qca_nymph.dtb \
 	imx6dl-pico-qca_pi.dtb \
 	imx6dl-pico_dwarf.dtb \
@@ -419,6 +420,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
 	imx6q-nitrogen6_max.dtb \
 	imx6q-novena.dtb \
 	imx6q-phytec-pbab01.dtb \
+	imx6q-pico-qca_dwarf.dtb \
 	imx6q-pico-qca_nymph.dtb \
 	imx6q-pico-qca_pi.dtb \
 	imx6q-pico_dwarf.dtb \
