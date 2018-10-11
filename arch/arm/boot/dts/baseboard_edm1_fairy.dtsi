@@ -40,21 +40,9 @@
 			dir   = "out";
 		};
 
-		gpio_p261 {
-			label = "GPIO_P261";
-			gpios = <&EDM_EXT_GPIO_P261 GPIO_ACTIVE_HIGH>;
-			dir   = "out";
-		};
-
 		gpio_p262 {
 			label = "GPIO_P262";
 			gpios = <&EDM_EXT_GPIO_P262 GPIO_ACTIVE_HIGH>;
-			dir   = "out";
-		};
-
-		gpio_p264 {
-			label = "GPIO_P264";
-			gpios = <&EDM_EXT_GPIO_P264 GPIO_ACTIVE_HIGH>;
 			dir   = "out";
 		};
 	};
@@ -93,12 +81,15 @@
 		VDDIO-supply = <&reg_3p3v>;
 	};
 
-	egalax: egalax_i2c@2a {
-		compatible = "eeti,egalax_i2c";
-		reg = <0x2a>;
-		interrupt-parent = <&GPIO_BANK(EDM_EXT_GPIO_P259)>;
-		interrupts = <GPIO_NO(EDM_EXT_GPIO_P259) 8>;
-		int-gpios = <&EDM_EXT_GPIO_P259 GPIO_ACTIVE_LOW>;
+	polytouch: edt-ft5x06@38 {
+		compatible = "edt,edt-ft5x06";
+		reg = <0x38>;
+		pinctrl-names = "default";
+		interrupt-parent = <&GPIO_BANK(EDM_EXT_GPIO_P261)>; /* GPIO_P261 J1B-261 */
+		reset-gpios = <&EDM_EXT_GPIO_P264 1>; /* GPIO_P264 J1B-264 */
+		interrupts = <GPIO_NO(EDM_EXT_GPIO_P261) 0>;
+		touchscreen-size-x = <800>;
+		touchscreen-size-y = <480>;
 	};
 };
 
