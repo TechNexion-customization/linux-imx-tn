@@ -24,10 +24,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- *
- * <<Broadcom-WL-IPTag/Open:>>
- *
- * $Id: sbsdio.h 514727 2014-11-12 03:02:48Z $
+ * $Id: sbsdio.h 383835 2013-02-07 23:32:39Z $
  */
 
 #ifndef	_SBSDIO_H

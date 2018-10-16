@@ -19,9 +19,6 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- *
- * <<Broadcom-WL-IPTag/Open:>>
- *
  * $Id: epivers.h.in,v 13.33 2010-09-08 22:08:53 $
  *
 */
@@ -31,21 +28,21 @@
 
 #define	EPI_MAJOR_VERSION	1
 
-#define	EPI_MINOR_VERSION	363
+#define	EPI_MINOR_VERSION	141
 
-#define	EPI_RC_NUMBER		59
+#define	EPI_RC_NUMBER		100
 
-#define	EPI_INCREMENTAL_NUMBER	144
+#define	EPI_INCREMENTAL_NUMBER	6
 
 #define	EPI_BUILD_NUMBER	0
 
-#define	EPI_VERSION		1, 363, 59, 144
+#define	EPI_VERSION		1, 141, 100, 6
 
-#define	EPI_VERSION_NUM		0x0116b3b9
+#define	EPI_VERSION_NUM		0x018d6406
 
-#define EPI_VERSION_DEV		1.363.59
+#define EPI_VERSION_DEV		1.141.100
 
 /* Driver Version String, ASCII, 32 chars max */
-#define	EPI_VERSION_STR		"1.363.59.144.6 (r)"
+#define	EPI_VERSION_STR		"1.141.100.6 (r)"
 
 #endif /* _epivers_h_ */

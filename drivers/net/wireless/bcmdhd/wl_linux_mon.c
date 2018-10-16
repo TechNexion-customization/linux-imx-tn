@@ -21,10 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- *
- * <<Broadcom-WL-IPTag/Open:>>
- *
- * $Id: wl_linux_mon.c 514727 2014-11-12 03:02:48Z $
+ * $Id: wl_linux_mon.c 425343 2013-09-23 23:04:47Z $
  */
 
 #include <osl.h>

@@ -22,10 +22,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- *
- * <<Broadcom-WL-IPTag/Open:>>
- *
- * $Id: sbutils.c 514727 2014-11-12 03:02:48Z $
+ * $Id: sbutils.c 431423 2013-10-23 16:07:35Z $
  */
 
 #include <bcm_cfg.h>
@@ -237,12 +234,10 @@ _sb_coresba(si_info_t *sii)
 		break;
 	}
 
-#ifdef BCMSDIO
 	case SPI_BUS:
 	case SDIO_BUS:
 		sbaddr = (uint32)(uintptr)sii->curmap;
 		break;
-#endif
 
 
 	default:
@@ -713,7 +708,6 @@ _sb_setcoreidx(si_info_t *sii, uint coreidx)
 		regs = sii->curmap;
 		break;
 	}
-#ifdef BCMSDIO
 	case SPI_BUS:
 	case SDIO_BUS:
 		/* map new one */
@@ -723,7 +717,6 @@ _sb_setcoreidx(si_info_t *sii, uint coreidx)
 		}
 		regs = cores_info->regs[coreidx];
 		break;
-#endif	/* BCMSDIO */
 
 
 	default:
@@ -993,9 +986,7 @@ sb_set_initiator_to(si_t *sih, uint32 to, uint idx)
 			idx = SI_CC_IDX;
 			break;
 		case PCMCIA_BUS:
-#ifdef BCMSDIO
 		case SDIO_BUS:
-#endif
 			idx = si_findcoreidx(sih, PCMCIA_CORE_ID, 0);
 			break;
 		case SI_BUS:
@@ -1070,39 +1061,3 @@ sb_size(uint32 admatch)
 
 	return (size);
 }
-
-#if defined(BCMDBG_PHYDUMP)
-/* print interesting sbconfig registers */
-void
-sb_dumpregs(si_t *sih, struct bcmstrbuf *b)
-{
-	sbconfig_t *sb;
-	uint origidx, i, intr_val = 0;
-	si_info_t *sii = SI_INFO(sih);
-	si_cores_info_t *cores_info = (si_cores_info_t *)sii->cores_info;
-
-	origidx = sii->curidx;
-
-	INTR_OFF(sii, intr_val);
-
-	for (i = 0; i < sii->numcores; i++) {
-		sb = REGS2SB(sb_setcoreidx(sih, i));
-
-		bcm_bprintf(b, "core 0x%x: \n", cores_info->coreid[i]);
-
-		if (sii->pub.socirev > SONICS_2_2)
-			bcm_bprintf(b, "sbimerrlog 0x%x sbimerrloga 0x%x\n",
-			          sb_corereg(sih, si_coreidx(&sii->pub), SBIMERRLOG, 0, 0),
-			          sb_corereg(sih, si_coreidx(&sii->pub), SBIMERRLOGA, 0, 0));
-
-		bcm_bprintf(b, "sbtmstatelow 0x%x sbtmstatehigh 0x%x sbidhigh 0x%x "
-		            "sbimstate 0x%x\n sbimconfiglow 0x%x sbimconfighigh 0x%x\n",
-		            R_SBREG(sii, &sb->sbtmstatelow), R_SBREG(sii, &sb->sbtmstatehigh),
-		            R_SBREG(sii, &sb->sbidhigh), R_SBREG(sii, &sb->sbimstate),
-		            R_SBREG(sii, &sb->sbimconfiglow), R_SBREG(sii, &sb->sbimconfighigh));
-	}
-
-	sb_setcoreidx(sih, origidx);
-	INTR_RESTORE(sii, intr_val);
-}
-#endif	

@@ -23,14 +23,9 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- *
- * <<Broadcom-WL-IPTag/Open:>>
- *
- * $Id: uamp_api.h 514727 2014-11-12 03:02:48Z $
+ * $Id: uamp_api.h 294267 2011-11-04 23:41:52Z $
  *
  */
-
-
 #ifndef UAMP_API_H
 #define UAMP_API_H
 

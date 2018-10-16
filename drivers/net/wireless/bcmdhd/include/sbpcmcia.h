@@ -21,10 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- *
- * <<Broadcom-WL-IPTag/Open:>>
- *
- * $Id: sbpcmcia.h 521344 2014-12-17 10:03:55Z $
+ * $Id: sbpcmcia.h 427964 2013-10-07 07:13:33Z $
  */
 
 #ifndef	_SBPCMCIA_H

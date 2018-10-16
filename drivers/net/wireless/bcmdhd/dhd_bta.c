@@ -21,10 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- *
- * <<Broadcom-WL-IPTag/Open:>>
- *
- * $Id: dhd_bta.c 514727 2014-11-12 03:02:48Z $
+ * $Id: dhd_bta.c 434656 2013-11-07 01:11:33Z $
  */
 #error "WLBTAMP is not defined"
 

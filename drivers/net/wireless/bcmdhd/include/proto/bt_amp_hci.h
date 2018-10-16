@@ -21,10 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- *
- * <<Broadcom-WL-IPTag/Open:>>
- *
- * $Id: bt_amp_hci.h 518342 2014-12-01 23:21:41Z $
+ * $Id: bt_amp_hci.h 382882 2013-02-04 23:24:31Z $
 */
 
 #ifndef _bt_amp_hci_h

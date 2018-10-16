@@ -21,10 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- *
- * <<Broadcom-WL-IPTag/Open:>>
- *
- * $Id: bcmsdspi_linux.c 514727 2014-11-12 03:02:48Z $
+ * $Id: bcmsdspi_linux.c 406045 2013-06-05 22:09:52Z $
  */
 
 #include <typedefs.h>

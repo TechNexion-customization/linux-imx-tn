@@ -34,11 +34,7 @@
  *      Notwithstanding the above, under no circumstances may you combine this
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
- *
- *
- * <<Broadcom-WL-IPTag/Open:>>
- *
- * $Id: packed_section_end.h 514727 2014-11-12 03:02:48Z $
+ * $Id: packed_section_end.h 241182 2011-02-17 21:50:03Z $
  */
 
 
