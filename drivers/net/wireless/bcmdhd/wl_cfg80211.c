@@ -533,7 +533,8 @@ wl_cfg80211_add_iw_ie(struct bcm_cfg80211 *cfg, struct net_device *ndev, s32 bss
 
 static s32 wl_setup_wiphy(struct wireless_dev *wdev, struct device *dev, void *data);
 static void wl_free_wdev(struct bcm_cfg80211 *cfg);
-#ifdef CONFIG_CFG80211_INTERNAL_REGDB
+//#ifdef CONFIG_CFG80211_INTERNAL_REGDB
+#if 0
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 9, 0))
 static int
 #else
@@ -8077,7 +8078,8 @@ s32 wl_mode_to_nl80211_iftype(s32 mode)
 	return err;
 }
 
-#ifdef CONFIG_CFG80211_INTERNAL_REGDB
+//#ifdef CONFIG_CFG80211_INTERNAL_REGDB
+#if 0
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 9, 0))
 static int
 #else
@@ -8270,7 +8272,8 @@ static s32 wl_setup_wiphy(struct wireless_dev *wdev, struct device *sdiofunc_dev
 #endif 
 #endif /* WL_SUPPORT_BACKPORTED_KPATCHES) || (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) */
 
-#ifdef CONFIG_CFG80211_INTERNAL_REGDB
+//#ifdef CONFIG_CFG80211_INTERNAL_REGDB
+#if 0
 	wdev->wiphy->reg_notifier = wl_cfg80211_reg_notifier;
 #endif /* CONFIG_CFG80211_INTERNAL_REGDB */
 
