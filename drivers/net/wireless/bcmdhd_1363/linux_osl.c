@@ -1,7 +1,7 @@
 /*
  * Linux OS Independent Layer
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -24,7 +24,7 @@
  *
  * <<Broadcom-WL-IPTag/Open:>>
  *
- * $Id: linux_osl.c 657686 2016-09-02 06:39:10Z $
+ * $Id: linux_osl.c 602478 2015-11-26 04:46:12Z $
  */
 
 #define LINUX_PORT
@@ -350,14 +350,15 @@ osl_error(int bcmerror)
 	/* Array bounds covered by ASSERT in osl_attach */
 	return linuxbcmerrormap[-bcmerror];
 }
+
+osl_t *
 #ifdef SHARED_OSL_CMN
-osl_t *
 osl_attach(void *pdev, uint bustype, bool pkttag, void **osl_cmn)
-{
 #else
-osl_t *
 osl_attach(void *pdev, uint bustype, bool pkttag)
+#endif /* SHARED_OSL_CMN */
 {
+#ifndef SHARED_OSL_CMN
 	void **osl_cmn = NULL;
 #endif /* SHARED_OSL_CMN */
 	osl_t *osh;
@@ -816,11 +817,10 @@ osl_pkt_tofwder(osl_t *osh, void *skbs, int skb_cnt)
 /* Account for a downstream forwarder delivered packet to a WL/DHD driver.
  * Increment a GMAC forwarder interface's pktalloced count.
  */
-#ifdef BCMDBG_CTRACE
 void BCMFASTPATH
+#ifdef BCMDBG_CTRACE
 osl_pkt_frmfwder(osl_t *osh, void *skbs, int skb_cnt, int line, char *file)
 #else
-void BCMFASTPATH
 osl_pkt_frmfwder(osl_t *osh, void *skbs, int skb_cnt)
 #endif /* BCMDBG_CTRACE */
 {
@@ -892,63 +892,48 @@ osl_pkt_tonative(osl_t *osh, void *pkt)
  * In the process, native packet is destroyed, there is no copying
  * Also, a packettag is zeroed out
  */
-#ifdef BCMDBG_CTRACE
 void * BCMFASTPATH
+#ifdef BCMDBG_CTRACE
 osl_pkt_frmnative(osl_t *osh, void *pkt, int line, char *file)
 #else
-void * BCMFASTPATH
 osl_pkt_frmnative(osl_t *osh, void *pkt)
 #endif /* BCMDBG_CTRACE */
 {
-	struct sk_buff *cskb;
 	struct sk_buff *nskb;
-	unsigned long pktalloced = 0;
-
+#ifdef BCMDBG_CTRACE
+	struct sk_buff *nskb1, *nskb2;
+#endif
 
 	if (osh->pub.pkttag)
 		OSL_PKTTAG_CLEAR(pkt);
 
-	/* walk the PKTCLINK() list */
-	for (cskb = (struct sk_buff *)pkt;
-		cskb != NULL;
-		cskb = PKTISCHAINED(cskb) ? PKTCLINK(cskb) : NULL) {
-
-		/* walk the pkt buffer list */
-		for (nskb = cskb; nskb; nskb = nskb->next) {
-
-			/* Increment the packet counter */
-			pktalloced++;
-
-			/* clean the 'prev' pointer
-			 * Kernel 3.18 is leaving skb->prev pointer set to skb
-			 * to indicate a non-fragmented skb
-			 */
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 18, 0))
-			nskb->prev = NULL;
-#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3, 18, 0) */
-
+	/* Increment the packet counter */
+	for (nskb = (struct sk_buff *)pkt; nskb; nskb = nskb->next) {
+		atomic_add(PKTISCHAINED(nskb) ? PKTCCNT(nskb) : 1, &osh->cmn->pktalloced);
 
 #ifdef BCMDBG_CTRACE
-		ADD_CTRACE(osh, nskb, file, line);
-#endif /* BCMDBG_CTRACE */
-		}
-	}
-	/* Increment the packet counter */
-	atomic_add(pktalloced, &osh->cmn->pktalloced);
+		for (nskb1 = nskb; nskb1 != NULL; nskb1 = nskb2) {
+			if (PKTISCHAINED(nskb1)) {
+				nskb2 = PKTCLINK(nskb1);
+			}
+			else
+				nskb2 = NULL;
 
+			ADD_CTRACE(osh, nskb1, file, line);
+		}
+#endif /* BCMDBG_CTRACE */
+	}
 	return (void *)pkt;
 }
 
 /* Return a new packet. zero out pkttag */
-#ifdef BCMDBG_CTRACE
 void * BCMFASTPATH
+#ifdef BCMDBG_CTRACE
 osl_pktget(osl_t *osh, uint len, int line, char *file)
 #else
 #ifdef BCM_OBJECT_TRACE
-void * BCMFASTPATH
 osl_pktget(osl_t *osh, uint len, int line, const char *caller)
 #else
-void * BCMFASTPATH
 osl_pktget(osl_t *osh, uint len)
 #endif /* BCM_OBJECT_TRACE */
 #endif /* BCMDBG_CTRACE */
@@ -964,10 +949,11 @@ osl_pktget(osl_t *osh, uint len)
 #ifdef CTFPOOL
 	/* Allocate from local pool */
 	skb = osl_pktfastget(osh, len);
-	if ((skb != NULL) || ((skb = osl_alloc_skb(osh, len)) != NULL)) {
+	if ((skb != NULL) || ((skb = osl_alloc_skb(osh, len)) != NULL))
 #else /* CTFPOOL */
-	if ((skb = osl_alloc_skb(osh, len))) {
+	if ((skb = osl_alloc_skb(osh, len)))
 #endif /* CTFPOOL */
+	{
 		skb->tail += len;
 		skb->len  += len;
 		skb->priority = 0;
@@ -1030,11 +1016,10 @@ osl_pktfastfree(osl_t *osh, struct sk_buff *skb)
 #endif /* CTFPOOL */
 
 /* Free the driver packet. Free the tag if present */
-#ifdef BCM_OBJECT_TRACE
 void BCMFASTPATH
+#ifdef BCM_OBJECT_TRACE
 osl_pktfree(osl_t *osh, void *p, bool send, int line, const char *caller)
 #else
-void BCMFASTPATH
 osl_pktfree(osl_t *osh, void *p, bool send)
 #endif /* BCM_OBJECT_TRACE */
 {
@@ -1621,9 +1606,10 @@ dmaaddr_t BCMFASTPATH
 osl_dma_map(osl_t *osh, void *va, uint size, int direction, void *p, hnddma_seg_map_t *dmah)
 {
 	int dir;
-	dmaaddr_t ret_addr;
+#ifdef BCMDMA64OSL
+	dmaaddr_t ret;
 	dma_addr_t  map_addr;
-	int ret;
+#endif /* BCMDMA64OSL */
 
 	ASSERT((osh && (osh->magic == OS_HANDLE_MAGIC)));
 	dir = (direction == DMA_TX)? PCI_DMA_TODEVICE: PCI_DMA_FROMDEVICE;
@@ -1631,24 +1617,14 @@ osl_dma_map(osl_t *osh, void *va, uint size, int direction, void *p, hnddma_seg_
 
 
 
+#ifdef BCMDMA64OSL
 	map_addr = pci_map_single(osh->pdev, va, size, dir);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27))
-	ret = pci_dma_mapping_error(osh->pdev, map_addr);
-#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 5))
-	ret = pci_dma_mapping_error(map_addr);
+	PHYSADDRLOSET(ret, map_addr & 0xffffffff);
+	PHYSADDRHISET(ret, (map_addr >> 32) & 0xffffffff);
+	return ret;
 #else
-	ret = 0;
-#endif
-	if (ret) {
-		printk("%s: Failed to map memory\n", __FUNCTION__);
-		PHYSADDRLOSET(ret_addr, 0);
-		PHYSADDRHISET(ret_addr, 0);
-	} else {
-		PHYSADDRLOSET(ret_addr, map_addr & 0xffffffff);
-		PHYSADDRHISET(ret_addr, (map_addr >> 32) & 0xffffffff);
-	}
-
-	return ret_addr;
+	return (pci_map_single(osh->pdev, va, size, dir));
+#endif /* BCMDMA64OSL */
 }
 
 void BCMFASTPATH
@@ -1883,15 +1859,13 @@ osl_sleep(uint ms)
 /* Clone a packet.
  * The pkttag contents are NOT cloned.
  */
-#ifdef BCMDBG_CTRACE
 void *
+#ifdef BCMDBG_CTRACE
 osl_pktdup(osl_t *osh, void *skb, int line, char *file)
 #else
 #ifdef BCM_OBJECT_TRACE
-void *
 osl_pktdup(osl_t *osh, void *skb, int line, const char *caller)
 #else
-void *
 osl_pktdup(osl_t *osh, void *skb)
 #endif /* BCM_OBJECT_TRACE */
 #endif /* BCMDBG_CTRACE */
@@ -2641,10 +2615,13 @@ osl_sec_dma_free_consistent(osl_t *osh, void *va, uint size, dmaaddr_t pa)
 #include <linux/kallsyms.h>
 #include <net/sock.h>
 void
-osl_pkt_orphan_partial(struct sk_buff *skb)
+osl_pkt_orphan_partial(struct sk_buff *skb, int tsq)
 {
 	uint32 fraction;
 	static void *p_tcp_wfree = NULL;
+
+	if (tsq <= 0)
+		return;
 
 	if (!skb->destructor || skb->destructor == sock_wfree)
 		return;
@@ -2666,7 +2643,7 @@ osl_pkt_orphan_partial(struct sk_buff *skb)
 	 * sk_wmem_alloc to allow more skb can be allocated for this
 	 * socket for better cusion meeting WiFi device requirement
 	 */
-	fraction = skb->truesize * (TSQ_MULTIPLIER - 1) / TSQ_MULTIPLIER;
+	fraction = skb->truesize * (tsq - 1) / tsq;
 	skb->truesize -= fraction;
 	atomic_sub(fraction, &skb->sk->sk_wmem_alloc);
 }

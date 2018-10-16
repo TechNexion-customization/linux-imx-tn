@@ -2,7 +2,7 @@
  * Linux-specific abstractions to gain some independence from linux kernel versions.
  * Pave over some 2.2 versus 2.4 versus 2.6 kernel differences.
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -749,7 +749,7 @@ not match our unaligned address for < 2.6.24
  * Overide latest kfifo functions with
  * older version to work on older kernels
  */
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 33)) && !defined(WL_COMPAT_WIRELESS)
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 33))
 #define kfifo_in_spinlocked(a, b, c, d)		kfifo_put(a, (u8 *)b, c)
 #define kfifo_out_spinlocked(a, b, c, d)	kfifo_get(a, (u8 *)b, c)
 #define kfifo_esize(a)				1

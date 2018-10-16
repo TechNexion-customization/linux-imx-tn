@@ -5,7 +5,7 @@
  *
  * Definitions subject to change without notice.
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -92,14 +92,16 @@ enum {
 #define DHD_ISCAN_VAL	0x2000
 #define DHD_ARPOE_VAL	0x4000
 #define DHD_REORDER_VAL	0x8000
-#define DHD_WL_VAL		0x10000
 #define DHD_NOCHECKDIED_VAL		0x20000 /* UTF WAR */
-#define DHD_WL_VAL2		0x40000
 #define DHD_PNO_VAL		0x80000
 #define DHD_MSGTRACE_VAL	0x100000
 #define DHD_FWLOG_VAL		0x400000
 #define DHD_RTT_VAL		0x200000
 #define DHD_IOV_INFO_VAL	0x800000
+#define DHD_ANDROID_VAL	0x10000
+#define DHD_IW_VAL	0x20000
+#define DHD_CFG_VAL	0x40000
+#define DHD_CONFIG_VAL	0x80000
 
 #ifdef SDTEST
 /* For pktgen iovar */

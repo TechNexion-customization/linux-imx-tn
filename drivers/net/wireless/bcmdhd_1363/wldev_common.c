@@ -1,7 +1,7 @@
 /*
  * Common function shared by Linux WEXT, cfg80211 and p2p drivers
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -34,6 +34,7 @@
 
 #include <wldev_common.h>
 #include <bcmutils.h>
+#include <dhd_config.h>
 
 #define htod32(i) (i)
 #define htod16(i) (i)
@@ -354,6 +355,7 @@ int wldev_get_datarate(struct net_device *dev, int *datarate)
 	return error;
 }
 
+#ifdef WL_CFG80211
 extern chanspec_t
 wl_chspec_driver_to_host(chanspec_t chanspec);
 #define WL_EXTRA_BUF_MAX 2048
@@ -405,6 +407,8 @@ int wldev_get_mode(
 	}
 	return error;
 }
+#endif
+
 int wldev_set_country(
 	struct net_device *dev, char *country_code, bool notify, bool user_enforced, int revinfo)
 {
@@ -440,7 +444,9 @@ int wldev_set_country(
 		cspec.rev = revinfo;
 		memcpy(cspec.country_abbrev, country_code, WLC_CNTRY_BUF_SZ);
 		memcpy(cspec.ccode, country_code, WLC_CNTRY_BUF_SZ);
-		dhd_get_customized_country_code(dev, (char *)&cspec.country_abbrev, &cspec);
+		error = dhd_conf_get_country_from_config(dhd_get_pub(dev), &cspec);
+		if (error)
+			dhd_get_customized_country_code(dev, (char *)&cspec.country_abbrev, &cspec);
 		error = wldev_iovar_setbuf(dev, "country", &cspec, sizeof(cspec),
 			smbuf, sizeof(smbuf), NULL);
 		if (error < 0) {
@@ -448,9 +454,11 @@ int wldev_set_country(
 				__FUNCTION__, country_code, cspec.ccode, cspec.rev));
 			return error;
 		}
+		dhd_conf_fix_country(dhd_get_pub(dev));
+		dhd_conf_get_country(dhd_get_pub(dev), &cspec);
 		dhd_bus_country_set(dev, &cspec, notify);
-		WLDEV_INFO(("%s: set country for %s as %s rev %d\n",
-			__FUNCTION__, country_code, cspec.ccode, cspec.rev));
+		printf("%s: set country for %s as %s rev %d\n",
+			__FUNCTION__, country_code, cspec.ccode, cspec.rev);
 	}
 	return 0;
 }

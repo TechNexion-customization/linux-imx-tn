@@ -6,7 +6,7 @@
  *
  * Definitions subject to change without notice.
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -27,7 +27,7 @@
  * other than the GPL, without Broadcom's express prior written consent.
  * <<Broadcom-WL-IPTag/Open:>>
  *
- * $Id: wlioctl.h 633955 2016-04-26 08:17:00Z $
+ * $Id: wlioctl.h 609280 2016-01-01 06:31:38Z $
  */
 
 #ifndef _wlioctl_h_
@@ -4984,20 +4984,6 @@ typedef BWL_PRE_PACKED_STRUCT struct wlc_ipfo_route_tbl {
 #define LOGRRC_FIX_LEN	8
 #define IOBUF_ALLOWED_NUM_OF_LOGREC(type, len) ((len - LOGRRC_FIX_LEN)/sizeof(type))
 
-#ifdef BCMWAPI_WAI
-#define IV_LEN 16
-	struct wapi_sta_msg_t
-	{
-		uint16	msg_type;
-		uint16	datalen;
-		uint8	vap_mac[6];
-		uint8	reserve_data1[2];
-		uint8	sta_mac[6];
-		uint8	reserve_data2[2];
-		uint8	gsn[IV_LEN];
-		uint8	wie[256];
-	};
-#endif /* BCMWAPI_WAI */
 
 	/* chanim acs record */
 	typedef struct {
@@ -8075,13 +8061,5 @@ typedef struct wl_temp_control {
 	bool enable;
 	uint16 control_bit;
 } wl_temp_control_t;
-
-/* SensorHub Iovar */
-typedef struct {
-	bool	enable;
-	uint16	cmd;
-	uint16	op_mode;
-	uint16	interval;
-} shub_control_t;
 
 #endif /* _wlioctl_h_ */

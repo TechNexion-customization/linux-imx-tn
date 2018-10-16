@@ -1,7 +1,7 @@
 /*
  * Linux DHD Bus Module for PCIE
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -24,7 +24,7 @@
  *
  * <<Broadcom-WL-IPTag/Open:>>
  *
- * $Id: dhd_pcie_linux.c 650724 2016-07-22 08:41:52Z $
+ * $Id: dhd_pcie_linux.c 610267 2016-01-06 16:03:53Z $
  */
 
 
@@ -136,6 +136,12 @@ static int dhdpcie_init(struct pci_dev *pdev);
 static irqreturn_t dhdpcie_isr(int irq, void *arg);
 /* OS Routine functions for PCI suspend/resume */
 
+#if defined(MULTIPLE_SUPPLICANT)
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+DEFINE_MUTEX(_dhd_sdio_mutex_lock_);
+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25)) */
+#endif 
+
 static int dhdpcie_set_suspend_resume(struct pci_dev *dev, bool state);
 static int dhdpcie_resume_host_dev(dhd_bus_t *bus);
 static int dhdpcie_suspend_host_dev(dhd_bus_t *bus);
@@ -175,11 +181,7 @@ static const struct dev_pm_ops dhd_pcie_pm_ops = {
 
 static struct pci_driver dhdpcie_driver = {
 	node:		{},
-#ifndef BCMDHDX
 	name:		"pcieh",
-#else
-	name:		"pciehx",
-#endif /* BCMDHDX */
 	id_table:	dhdpcie_pci_devid,
 	probe:		dhdpcie_pci_probe,
 	remove:		dhdpcie_pci_remove,
@@ -296,8 +298,6 @@ static int dhdpcie_set_suspend_resume(struct pci_dev *pdev, bool state)
 	return ret;
 }
 
-extern void dhd_dpc_tasklet_kill(dhd_pub_t *dhdp);
-
 static int dhdpcie_suspend_dev(struct pci_dev *dev)
 {
 	int ret;
@@ -311,8 +311,6 @@ static int dhdpcie_suspend_dev(struct pci_dev *dev)
 	}
 #endif /* OEM_ANDROID && LINUX_VERSION_CODE >= KERNEL_VERSION(3, 0, 0) */
 	DHD_TRACE_HW4(("%s: Enter\n", __FUNCTION__));
-	disable_irq(dev->irq);
-	dhd_dpc_tasklet_kill(bus->dhd);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 0, 0))
 	bus->pci_d3hot_done = 1;
 #endif /* OEM_ANDROID && LINUX_VERSION_CODE >= KERNEL_VERSION(3, 0, 0) */
@@ -329,6 +327,7 @@ static int dhdpcie_suspend_dev(struct pci_dev *dev)
 		DHD_ERROR(("%s: pci_set_power_state error %d\n",
 			__FUNCTION__, ret));
 	}
+	disable_irq(dev->irq);
 	return ret;
 }
 
@@ -494,14 +493,9 @@ dhdpcie_bus_unregister(void)
 int __devinit
 dhdpcie_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 {
-#ifndef MULTI_CHIP_SUPPORT
-	/* Don't enumerate more than one device */
-	if (dhdpcie_init_succeeded) {
-		DHD_TRACE(("%s: PCIe Enumeration is already done.\n",
-		__func__));
-		return -ENODEV;
-	}
-#endif /* MULTI_CHIP_SUPPORT */
+#ifdef BUS_POWER_RESTORE
+	wifi_adapter_info_t *adapter = NULL;
+#endif
 
 	if (dhdpcie_chipmatch (pdev->vendor, pdev->device)) {
 		DHD_ERROR(("%s: chipmatch failed!!\n", __FUNCTION__));
@@ -520,6 +514,14 @@ dhdpcie_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 	/* disable async suspend */
 	device_disable_async_suspend(&pdev->dev);
 #endif /* BCMPCIE_DISABLE_ASYNC_SUSPEND */
+
+#ifdef BUS_POWER_RESTORE
+	adapter = dhd_wifi_platform_get_adapter(PCI_BUS, pdev->bus->number,
+						PCI_SLOT(pdev->devfn));
+
+	if (adapter != NULL)
+		adapter->pci_dev = pdev;
+#endif
 
 	DHD_TRACE(("%s: PCIe Enumeration done!!\n", __FUNCTION__));
 	return 0;
@@ -548,6 +550,19 @@ dhdpcie_pci_remove(struct pci_dev *pdev)
 	dhd_bus_t *bus = NULL;
 
 	DHD_TRACE(("%s Enter\n", __FUNCTION__));
+
+#if defined(MULTIPLE_SUPPLICANT)
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+	if (mutex_is_locked(&_dhd_sdio_mutex_lock_) == 0) {
+		DHD_ERROR(("%s : no mutex held. set lock\n", __FUNCTION__));
+	}
+	else {
+		DHD_ERROR(("%s : mutex is locked!. wait for unlocking\n", __FUNCTION__));
+	}
+	mutex_lock(&_dhd_sdio_mutex_lock_);
+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25)) */
+#endif 
+
 	pch = pci_get_drvdata(pdev);
 	bus = pch->bus;
 	osh = pch->osh;
@@ -577,6 +592,13 @@ dhdpcie_pci_remove(struct pci_dev *pdev)
 
 	dhdpcie_init_succeeded = FALSE;
 
+#if defined(MULTIPLE_SUPPLICANT)
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+	mutex_unlock(&_dhd_sdio_mutex_lock_);
+	DHD_ERROR(("%s : the lock is released.\n", __FUNCTION__));
+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25)) */
+#endif /* LINUX */
+
 	DHD_TRACE(("%s Exit\n", __FUNCTION__));
 
 	return;
@@ -588,15 +610,14 @@ dhdpcie_request_irq(dhdpcie_info_t *dhdpcie_info)
 {
 	dhd_bus_t *bus = dhdpcie_info->bus;
 	struct pci_dev *pdev = dhdpcie_info->bus->dev;
+	int err = 0;
 
 	if (!bus->irq_registered) {
 		snprintf(dhdpcie_info->pciname, sizeof(dhdpcie_info->pciname),
 		    "dhdpcie:%s", pci_name(pdev));
-#ifndef PCIE_INTX_SUPPORT
-		pci_enable_msi(pdev);
-#endif /* !PCIE_INTX_SUPPORT */
-		if (request_irq(pdev->irq, dhdpcie_isr, IRQF_SHARED,
-			dhdpcie_info->pciname, bus) < 0) {
+		err = request_irq(pdev->irq, dhdpcie_isr, IRQF_SHARED,
+			dhdpcie_info->pciname, bus);
+		if (err) {
 			DHD_ERROR(("%s: request_irq() failed\n", __FUNCTION__));
 			return -1;
 		} else {
@@ -758,6 +779,10 @@ void dhdpcie_linkdown_cb(struct_pcie_notify *noti)
 #endif /* CONFIG_ARCH_MSM || (EXYNOS_PCIE_LINKDOWN_RECOVERY && CONFIG_SOC_EXYNOS8890) */
 #endif /* EXYNOS_PCIE_LINKDOWN_RECOVERY */
 
+#if defined(MULTIPLE_SUPPLICANT)
+extern void wl_android_post_init(void); // terence 20120530: fix critical section in dhd_open and dhdsdio_probe
+#endif
+
 int dhdpcie_init(struct pci_dev *pdev)
 {
 
@@ -768,6 +793,18 @@ int dhdpcie_init(struct pci_dev *pdev)
 #ifdef BCMPCIE_OOB_HOST_WAKE
 	dhdpcie_os_info_t	*dhdpcie_osinfo = NULL;
 #endif /* BCMPCIE_OOB_HOST_WAKE */
+
+#if defined(MULTIPLE_SUPPLICANT)
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+	if (mutex_is_locked(&_dhd_sdio_mutex_lock_) == 0) {
+		DHD_ERROR(("%s : no mutex held. set lock\n", __FUNCTION__));
+	}
+	else {
+		DHD_ERROR(("%s : mutex is locked!. wait for unlocking\n", __FUNCTION__));
+	}
+	mutex_lock(&_dhd_sdio_mutex_lock_);
+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25)) */
+#endif 
 
 	do {
 		/* osl attach */
@@ -911,6 +948,14 @@ int dhdpcie_init(struct pci_dev *pdev)
 
 		dhdpcie_init_succeeded = TRUE;
 
+#if defined(MULTIPLE_SUPPLICANT)
+		wl_android_post_init(); // terence 20120530: fix critical section in dhd_open and dhdsdio_probe
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+		mutex_unlock(&_dhd_sdio_mutex_lock_);
+		DHD_ERROR(("%s : the lock is released.\n", __FUNCTION__));
+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)) */
+#endif 
+
 		DHD_TRACE(("%s:Exit - SUCCESS \n", __FUNCTION__));
 		return 0;  /* return  SUCCESS  */
 
@@ -933,6 +978,12 @@ int dhdpcie_init(struct pci_dev *pdev)
 		osl_detach(osh);
 
 	dhdpcie_init_succeeded = FALSE;
+#if defined(MULTIPLE_SUPPLICANT)
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+	mutex_unlock(&_dhd_sdio_mutex_lock_);
+	DHD_ERROR(("%s : the lock is released.\n", __FUNCTION__));
+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)) */
+#endif 
 
 	DHD_TRACE(("%s:Exit - FAILURE \n", __FUNCTION__));
 
@@ -953,9 +1004,6 @@ dhdpcie_free_irq(dhd_bus_t *bus)
 	if (bus->irq_registered) {
 		pdev = bus->dev;
 		free_irq(pdev->irq, bus);
-#ifndef PCIE_INTX_SUPPORT
-		pci_disable_msi(pdev);
-#endif /* !PCIE_INTX_SUPPORT */
 		bus->irq_registered = FALSE;
 	} else {
 		DHD_ERROR(("%s: PCIe IRQ is not registered\n", __FUNCTION__));
@@ -1362,9 +1410,9 @@ int dhdpcie_oob_intr_register(dhd_bus_t *bus)
 	}
 
 	if (dhdpcie_osinfo->oob_irq_num > 0) {
-		DHD_INFO_HW4(("%s OOB irq=%d flags=%X \n", __FUNCTION__,
+		printf("%s OOB irq=%d flags=0x%X\n", __FUNCTION__,
 			(int)dhdpcie_osinfo->oob_irq_num,
-			(int)dhdpcie_osinfo->oob_irq_flags));
+			(int)dhdpcie_osinfo->oob_irq_flags);
 		err = request_irq(dhdpcie_osinfo->oob_irq_num, wlan_oob_irq,
 			dhdpcie_osinfo->oob_irq_flags, "dhdpcie_host_wake",
 			bus);
@@ -1373,10 +1421,17 @@ int dhdpcie_oob_intr_register(dhd_bus_t *bus)
 				__FUNCTION__, err));
 			return err;
 		}
+#if defined(DISABLE_WOWLAN)
+		printf("%s: disable_irq_wake\n", __FUNCTION__);
+		dhdpcie_osinfo->oob_irq_wake_enabled = FALSE;
+#else
+		printf("%s: enable_irq_wake\n", __FUNCTION__);
 		err = enable_irq_wake(dhdpcie_osinfo->oob_irq_num);
 		if (!err) {
 			dhdpcie_osinfo->oob_irq_wake_enabled = TRUE;
-		}
+		} else
+			printf("%s: enable_irq_wake failed with %d\n", __FUNCTION__, err);
+#endif
 		dhdpcie_osinfo->oob_irq_enabled = TRUE;
 	}
 

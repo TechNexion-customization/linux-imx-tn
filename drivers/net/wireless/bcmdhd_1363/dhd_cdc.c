@@ -1,7 +1,7 @@
 /*
  * DHD Protocol Module for CDC and BDC.
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -24,7 +24,7 @@
  *
  * <<Broadcom-WL-IPTag/Open:>>
  *
- * $Id: dhd_cdc.c 633939 2016-04-26 06:55:52Z $
+ * $Id: dhd_cdc.c 596022 2015-10-29 11:02:47Z $
  *
  * BDC is like CDC, except it includes a header for data packets to convey
  * packet priority over the bus, and flags (e.g. to indicate checksum status
@@ -276,6 +276,7 @@ dhd_prot_ioctl(dhd_pub_t *dhd, int ifidx, wl_ioctl_t * ioc, void * buf, int len)
 	dhd_prot_t *prot = dhd->prot;
 	int ret = -1;
 	uint8 action;
+	static int error_cnt = 0;
 
 	if ((dhd->busstate == DHD_BUS_DOWN) || dhd->hang_was_sent) {
 		DHD_ERROR(("%s : bus is down. we have nothing to do\n", __FUNCTION__));
@@ -309,6 +310,13 @@ dhd_prot_ioctl(dhd_pub_t *dhd, int ifidx, wl_ioctl_t * ioc, void * buf, int len)
 		if (ret > 0)
 			ioc->used = ret - sizeof(cdc_ioctl_t);
 	}
+	// terence 20130805: send hang event to wpa_supplicant
+	if (ret == -EIO) {
+		error_cnt++;
+		if (error_cnt > 2)
+			ret = -ETIMEDOUT;
+	} else
+		error_cnt = 0;
 
 	/* Too many programs assume ioctl() returns 0 on success */
 	if (ret >= 0)
@@ -542,8 +550,11 @@ dhd_sync_with_dongle(dhd_pub_t *dhd)
 
 
 	dhd_process_cid_mac(dhd, TRUE);
+
 	ret = dhd_preinit_ioctls(dhd);
-	dhd_process_cid_mac(dhd, FALSE);
+
+	if (!ret)
+		dhd_process_cid_mac(dhd, FALSE);
 
 	/* Always assumes wl for now */
 	dhd->iswl = TRUE;

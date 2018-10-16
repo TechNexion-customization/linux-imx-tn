@@ -3,7 +3,7 @@
  *     export functions to client drivers
  *     abstract OS and BUS specific details of SDIO
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -26,7 +26,7 @@
  *
  * <<Broadcom-WL-IPTag/Open:>>
  *
- * $Id: bcmsdh.h 662741 2016-11-08 09:37:17Z $
+ * $Id: bcmsdh.h 514727 2014-11-12 03:02:48Z $
  */
 
 /**
@@ -40,7 +40,7 @@
 #define BCMSDH_INFO_VAL		0x0002 /* Info */
 extern const uint bcmsdh_msglevel;
 
-#define BCMSDH_ERROR(x)
+#define BCMSDH_ERROR(x) printf x
 #define BCMSDH_INFO(x)
 
 #if defined(BCMSDIO) && (defined(BCMSDIOH_STD) || defined(BCMSDIOH_BCM) || \
@@ -148,6 +148,11 @@ extern int bcmsdh_send_buf(void *sdh, uint32 addr, uint fn, uint flags,
 extern int bcmsdh_recv_buf(void *sdh, uint32 addr, uint fn, uint flags,
                            uint8 *buf, uint nbytes, void *pkt,
                            bcmsdh_cmplt_fn_t complete_fn, void *handle);
+#if defined(SWTXGLOM)
+extern int bcmsdh_send_swtxglom_buf(void *sdh, uint32 addr, uint fn, uint flags,
+                           uint8 *buf, uint nbytes, void *pkt,
+                           bcmsdh_cmplt_fn_t complete_fn, void *handle);
+#endif
 
 extern void bcmsdh_glom_post(void *sdh, uint8 *frame, void *pkt, uint len);
 extern void bcmsdh_glom_clear(void *sdh);

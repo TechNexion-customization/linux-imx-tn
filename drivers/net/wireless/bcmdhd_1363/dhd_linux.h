@@ -1,7 +1,7 @@
 /*
  * DHD Linux header file (dhd_linux exports for cfg80211 and other components)
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -24,7 +24,7 @@
  *
  * <<Broadcom-WL-IPTag/Open:>>
  *
- * $Id: dhd_linux.h 662542 2016-10-28 03:26:10Z $
+ * $Id: dhd_linux.h 591285 2015-10-07 11:56:29Z $
  */
 
 /* wifi platform functions for power, interrupt and pre-alloc, either
@@ -51,25 +51,6 @@
 #include <linux/earlysuspend.h>
 #endif /* defined(CONFIG_HAS_EARLYSUSPEND) && defined(DHD_USE_EARLYSUSPEND) */
 
-#if defined(CONFIG_WIFI_CONTROL_FUNC)
-#include <linux/wlan_plat.h>
-#endif
-
-#if !defined(CONFIG_WIFI_CONTROL_FUNC)
-#define WLAN_PLAT_NODFS_FLAG    0x01
-struct wifi_platform_data {
-	int (*set_power)(int val);
-	int (*set_reset)(int val);
-	int (*set_carddetect)(int val);
-	void *(*mem_prealloc)(int section, unsigned long size);
-	int (*get_mac_addr)(unsigned char *buf);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 58)) || defined(CUSTOM_COUNTRY_CODE)
-	void *(*get_country_code)(char *ccode, u32 flags);
-#else /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 58)) || defined (CUSTOM_COUNTRY_CODE) */
-	void *(*get_country_code)(char *ccode);
-#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 58)) */
- };
-#endif /* CONFIG_WIFI_CONTROL_FUNC */
 #define DHD_REGISTRATION_TIMEOUT  12000  /* msec : allowed time to finished dhd registration */
 
 typedef struct wifi_adapter_info {
@@ -78,14 +59,40 @@ typedef struct wifi_adapter_info {
 	uint		intr_flags;
 	const char	*fw_path;
 	const char	*nv_path;
+	const char	*conf_path;
 	void		*wifi_plat_data;	/* wifi ctrl func, for backward compatibility */
 	uint		bus_type;
 	uint		bus_num;
 	uint		slot_num;
-#ifdef OOB_PARAM
-	uint		oob_disable;
-#endif /* OOB_PARAM */
+#ifdef BUS_POWER_RESTORE
+#if defined(BCMSDIO)
+	struct sdio_func *sdio_func;
+#endif /* BCMSDIO */
+#if defined(BCMPCIE)
+	struct pci_dev *pci_dev;
+	struct pci_saved_state *pci_saved_state;
+#endif /* BCMPCIE */
+#endif
 } wifi_adapter_info_t;
+
+#define WLAN_PLAT_NODFS_FLAG    0x01
+#define WLAN_PLAT_AP_FLAG	0x02
+struct wifi_platform_data {
+#ifdef BUS_POWER_RESTORE
+	int (*set_power)(bool val, wifi_adapter_info_t *adapter);
+#else
+	int (*set_power)(bool val);
+#endif
+	int (*set_reset)(int val);
+	int (*set_carddetect)(bool val);
+	void *(*mem_prealloc)(int section, unsigned long size);
+	int (*get_mac_addr)(unsigned char *buf);
+#if defined(CUSTOM_COUNTRY_CODE)
+	void *(*get_country_code)(char *ccode, u32 flags);
+#else /* defined (CUSTOM_COUNTRY_CODE) */
+	void *(*get_country_code)(char *ccode);
+#endif
+};
 
 typedef struct bcmdhd_wifi_platdata {
 	uint				num_adapters;

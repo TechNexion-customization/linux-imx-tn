@@ -4,7 +4,7 @@
  * Provides type definitions and function prototypes used to link the
  * DHD OS, bus, and protocol modules.
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -27,7 +27,7 @@
  *
  * <<Broadcom-WL-IPTag/Open:>>
  *
- * $Id: dhd_bus.h 647154 2016-07-04 07:23:19Z $
+ * $Id: dhd_bus.h 602721 2015-11-27 10:32:48Z $
  */
 
 #ifndef _dhd_bus_h_
@@ -42,7 +42,8 @@ extern int dhd_bus_register(void);
 extern void dhd_bus_unregister(void);
 
 /* Download firmware image and nvram image */
-extern int dhd_bus_download_firmware(struct dhd_bus *bus, osl_t *osh, char *fw_path, char *nv_path);
+extern int dhd_bus_download_firmware(struct dhd_bus *bus, osl_t *osh,
+	char *fw_path, char *nv_path, char *conf_path);
 
 /* Stop bus module: clear pending frames, disable data flow */
 extern void dhd_bus_stop(struct dhd_bus *bus, bool enforce_mutex);
@@ -207,13 +208,6 @@ extern int dhd_bus_request_irq(struct dhd_bus *bus);
 
 #ifdef DHD_FW_COREDUMP
 extern int dhd_bus_mem_dump(dhd_pub_t *dhd);
-
-extern struct dhd_bus *g_dhd_bus;
-#ifdef BCMDHDX
-extern int dhdx_dongle_mem_dump(void);
-#else
-extern int dhd_dongle_mem_dump(void);
-#endif /* BCMDHDX */
 #endif /* DHD_FW_COREDUMP */
 
 #endif /* BCMPCIE */

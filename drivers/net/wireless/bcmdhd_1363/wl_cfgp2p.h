@@ -1,7 +1,7 @@
 /*
  * Linux cfgp2p driver
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -24,7 +24,7 @@
  *
  * <<Broadcom-WL-IPTag/Open:>>
  *
- * $Id: wl_cfgp2p.h 635563 2016-05-04 09:26:53Z $
+ * $Id: wl_cfgp2p.h 608203 2015-12-24 05:30:44Z $
  */
 #ifndef _wl_cfgp2p_h_
 #define _wl_cfgp2p_h_
@@ -171,7 +171,7 @@ enum wl_cfgp2p_status {
 #define	CFGP2P_DBG(args)								\
 	do {									\
 		if (wl_dbg_level & WL_DBG_DBG) {			\
-			printk(KERN_DEBUG "CFGP2P-DEBUG) %s :", __func__);	\
+			printk(KERN_INFO "CFGP2P-DEBUG) %s :", __func__);	\
 			printk args;							\
 		}									\
 	} while (0)
@@ -179,7 +179,7 @@ enum wl_cfgp2p_status {
 #define	CFGP2P_ACTION(args)								\
 	do {									\
 		if (wl_dbg_level & WL_DBG_P2P_ACTION) {			\
-			printk(KERN_DEBUG "CFGP2P-ACTION) %s :", __func__);	\
+			printk(KERN_INFO "CFGP2P-ACTION) %s :", __func__);	\
 			printk args;							\
 		}									\
 	} while (0)
@@ -191,6 +191,18 @@ enum wl_cfgp2p_status {
 		timer->data = (unsigned long) cfg; \
 		add_timer(timer); \
 	} while (0);
+
+#if (LINUX_VERSION_CODE <= KERNEL_VERSION(3, 0, 8))
+#ifdef WL_SUPPORT_BACKPORTED_KPATCHES
+#undef WL_SUPPORT_BACKPORTED_KPATCHES
+#endif
+#endif
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0))
+#ifdef WL_CFG80211_STA_EVENT
+#undef WL_CFG80211_STA_EVENT
+#endif
+#endif
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0)) && !defined(WL_CFG80211_P2P_DEV_IF)
 #define WL_CFG80211_P2P_DEV_IF
@@ -355,9 +367,6 @@ wl_cfgp2p_set_p2p_ps(struct bcm_cfg80211 *cfg, struct net_device *ndev, char* bu
 
 extern s32
 wl_cfgp2p_set_p2p_ecsa(struct bcm_cfg80211 *cfg, struct net_device *ndev, char* buf, int len);
-
-extern s32
-wl_cfgp2p_increase_p2p_bw(struct bcm_cfg80211 *cfg, struct net_device *ndev, char* buf, int len);
 
 extern u8 *
 wl_cfgp2p_retreive_p2pattrib(void *buf, u8 element_id);

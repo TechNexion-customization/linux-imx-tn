@@ -1,7 +1,7 @@
 /*
  * Driver O/S-independent utility routines
  *
- * Copyright (C) 1999-2017, Broadcom Corporation
+ * Copyright (C) 1999-2016, Broadcom Corporation
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -24,7 +24,7 @@
  *
  * <<Broadcom-WL-IPTag/Open:>>
  *
- * $Id: bcmutils.c 665091 2017-05-19 06:11:53Z $
+ * $Id: bcmutils.c 591286 2015-10-07 11:59:26Z $
  */
 
 #include <bcm_cfg.h>
@@ -347,8 +347,10 @@ bcm_strtoul(const char *cp, char **endp, uint base)
 
 	if (endp)
 		*endp = DISCARD_QUAL(cp, char);
+
 	return (result);
 }
+
 int
 bcm_atoi(const char *s)
 {
@@ -580,40 +582,6 @@ bcm_ether_atoe(const char *p, struct ether_addr *ea)
 	}
 
 	return (i == 6);
-}
-
-int
-bcm_atoicrc(const char *p, int *crc)
-{
-	char *ep;
-
-	*crc = bcm_strtoul(p, &ep, 16);
-	p = ep;
-	if (!*p++)
-		return 0;
-	else
-		return -1;
-}
-
-char *Dates[] = { "Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ",
-	"Sep ", "Oct ", "Nov ", "Dec ", 0 };
-
-void
-wipedates(const char *cp, int size)
-{
-	char **dp;
-	char *np;
-	char *ep;
-	for (dp = Dates; *dp; dp++) {
-		np = (void *)bcmstrnstr(cp, size, *dp, strlen(*dp));
-		if (np) {
-			ep = np + strlen(np) + 1;
-			ep += strlen(np);
-			while (np < ep) {
-				*np++ = 0;
-			}
-		}
-	}
 }
 
 int
@@ -949,6 +917,23 @@ pktgetdscp(uint8 *pktdata, uint pktlen, uint8 *dscp)
 	}
 
 	return rc;
+}
+
+/* Add to adjust the 802.1x priority */
+void
+pktset8021xprio(void *pkt, int prio)
+{
+	struct ether_header *eh;
+	uint8 *pktdata;
+	if(prio == PKTPRIO(pkt))
+		return;
+	pktdata = (uint8 *)PKTDATA(OSH_NULL, pkt);
+	ASSERT(ISALIGNED((uintptr)pktdata, sizeof(uint16)));
+	eh = (struct ether_header *) pktdata;
+	if (eh->ether_type == hton16(ETHER_TYPE_802_1X)) {
+		ASSERT(prio >= 0 && prio <= MAXPRIO);
+		PKTSETPRIO(pkt, prio);
+	}
 }
 
 /* The 0.5KB string table is not removed by compiler even though it's unused */
@@ -2084,11 +2069,7 @@ static const char *crypto_algo_names[] = {
 	"UNDEF",
 	"UNDEF",
 	"UNDEF",
-#ifdef BCMWAPI_WAI
-	"WAPI",
-#else
 	"UNDEF"
-#endif
 	"PMK",
 	"BIP",
 	"AES_GCM",
@@ -2493,6 +2474,17 @@ process_nvram_vars(char *varbuf, unsigned int len)
 
 	findNewline = FALSE;
 	column = 0;
+
+	// terence 20130914: print out NVRAM version
+	if (varbuf[0] == '#') {
+		printf("NVRAM version: ");
+		for (n=1; n<len; n++) {
+			if (varbuf[n] == '\n')
+				break;
+			printk("%c", varbuf[n]);
+		}
+		printk("\n");
+	}
 
 	for (n = 0; n < len; n++) {
 		if (varbuf[n] == '\r')
