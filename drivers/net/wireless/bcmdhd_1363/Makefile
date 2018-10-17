@@ -2,8 +2,8 @@
 # 1. WL_IFACE_COMB_NUM_CHANNELS must be added if Android version is 4.4 with Kernel version 3.0~3.4,
 #    otherwise please remove it.
 
-#CONFIG_BCMDHD := m
-#CONFIG_BCMDHD_SDIO := y
+#CONFIG_BCMDHD_1363 := m
+#CONFIG_BCMDHD_1363_SDIO := y
 #CONFIG_BCMDHD_PCIE := y
 #CONFIG_BCMDHD_OOB := y
 
@@ -17,7 +17,7 @@ DHDCFLAGS = -Wall -Wstrict-prototypes -Dlinux -DBCMDRIVER -DSDTEST       \
 	-DBCMSDIOH_TXGLOM_EXT -DWL_EXT_IAPSTA                                 \
 	-DENABLE_INSMOD_NO_FW_LOAD                                            \
 	-DCONFIG_DTS -DCUSTOMER_IMX \
-	-Idrivers/net/wireless/bcmdhd -Idrivers/net/wireless/bcmdhd/include
+	-Idrivers/net/wireless/bcmdhd_1363 -Idrivers/net/wireless/bcmdhd_1363/include
 
 DHDOFILES = aiutils.o siutils.o sbutils.o bcmutils.o bcmwifi_channels.o \
 	dhd_linux.o dhd_linux_platdev.o dhd_linux_sched.o dhd_pno.o \
@@ -25,7 +25,7 @@ DHDOFILES = aiutils.o siutils.o sbutils.o bcmutils.o bcmwifi_channels.o \
 	bcmevent.o hndpmu.o linux_osl.o wldev_common.o wl_android.o \
 	hnd_pktq.o hnd_pktpool.o dhd_config.o wl_android_ext.o
 
-ifneq ($(CONFIG_BCMDHD_SDIO),)
+ifneq ($(CONFIG_BCMDHD_1363_SDIO),)
 DHDCFLAGS += \
 	-DBCMSDIO -DMMC_SDIO_ABORT -DBCMLXSDMMC -DUSE_SDIOFIFO_IOVAR          \
 	-DBDC -DPROP_TXSTATUS -DDHD_USE_IDLECOUNT -DBCMSDIOH_TXGLOM           \
@@ -52,7 +52,7 @@ DHDOFILES += dhd_pcie.o dhd_pcie_linux.o pcie_core.o dhd_flowring.o \
 	dhd_msgbuf.o
 endif
 
-obj-$(CONFIG_BCMDHD) += bcmdhd.o
+obj-$(CONFIG_BCMDHD_1363) += bcmdhd.o
 bcmdhd-objs += $(DHDOFILES)
 
 #ifeq ($(CONFIG_MACH_PLATFORM),y)
@@ -90,7 +90,7 @@ DHDCFLAGS += -DVSDB -DWL_CFG80211_VSDB_PRIORITIZE_SCAN_REQUEST
 DHDCFLAGS += -DWLTDLS -DMIRACAST_AMPDU_SIZE=8 -DPROP_TXSTATUS_VSDB
 endif
 EXTRA_CFLAGS = $(DHDCFLAGS)
-ifeq ($(CONFIG_BCMDHD),m)
+ifeq ($(CONFIG_BCMDHD_1363),m)
 DHDCFLAGS += -DMULTIPLE_SUPPLICANT
 EXTRA_LDFLAGS += --strip-debug
 else

@@ -1,18 +1,18 @@
-config BCMDHD
-	tristate "Broadcom FullMAC wireless cards support"
+config BCMDHD_1363
+	tristate "Broadcom FullMAC wireless cards support v1.363.59"
 	---help---
 	  This module adds support for wireless adapters based on
 	  Broadcom FullMAC chipset.
 
 config BCMDHD_FW_PATH
-	depends on BCMDHD
+	depends on BCMDHD_1363
 	string "Firmware path"
 	default "/system/etc/firmware/fw_bcmdhd.bin"
 	---help---
 	  Path to the firmware file.
 
 config BCMDHD_NVRAM_PATH
-	depends on BCMDHD
+	depends on BCMDHD_1363
 	string "NVRAM path"
 	default "/system/etc/firmware/nvram.txt"
 	---help---
@@ -20,7 +20,7 @@ config BCMDHD_NVRAM_PATH
 
 config BCMDHD_WEXT
 	bool "Enable WEXT support"
-	depends on BCMDHD && CFG80211 = n
+	depends on BCMDHD_1363 && CFG80211 = n
 	select WIRELESS_EXT
 	select WEXT_PRIV
 	help
@@ -28,26 +28,26 @@ config BCMDHD_WEXT
 
 choice
 	prompt "Enable Chip Interface"
-	depends on BCMDHD
+	depends on BCMDHD_1363
 	---help---
 		Enable Chip Interface.
-config BCMDHD_SDIO
+config BCMDHD_1363_SDIO
 		bool "SDIO bus interface support"
-		depends on BCMDHD && MMC
+		depends on BCMDHD_1363 && MMC
 endchoice
 
 choice
-	depends on BCMDHD && BCMDHD_SDIO
+	depends on BCMDHD_1363 && BCMDHD_1363_SDIO
 	prompt "Interrupt type"
 	---help---
 		Interrupt type
 config BCMDHD_OOB
-	depends on BCMDHD && BCMDHD_SDIO
+	depends on BCMDHD_1363 && BCMDHD_1363_SDIO
 	bool "Out-of-Band Interrupt"
 	---help---
 		Interrupt from WL_HOST_WAKE.
 config BCMDHD_SDIO_IRQ
-	depends on BCMDHD && BCMDHD_SDIO
+	depends on BCMDHD_1363 && BCMDHD_1363_SDIO
 	bool "In-Band Interrupt"
 	---help---
 	  Interrupt from SDIO DAT[1]

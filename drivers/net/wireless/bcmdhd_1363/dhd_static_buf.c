@@ -186,7 +186,7 @@ static int dhd_init_wlan_mem(void)
 	}
 	printk("%s: sectoin %d, size=%d\n", __FUNCTION__, DHD_PREALLOC_PROT, DHD_PREALLOC_PROT_SIZE);
 
-#if defined(CONFIG_BCMDHD_SDIO)
+#if defined(CONFIG_BCMDHD_1363_SDIO)
 	wlan_static_rxbuf = kmalloc(DHD_PREALLOC_RXBUF_SIZE, GFP_KERNEL);
 	if (!wlan_static_rxbuf) {
 		pr_err("Failed to alloc wlan_static_rxbuf\n");
@@ -245,7 +245,7 @@ err_mem_alloc:
 	if (wlan_static_prot)
 		kfree(wlan_static_prot);
 	
-#if defined(CONFIG_BCMDHD_SDIO)
+#if defined(CONFIG_BCMDHD_1363_SDIO)
 	if (wlan_static_rxbuf)
 		kfree(wlan_static_rxbuf);
 
@@ -320,7 +320,7 @@ dhd_static_buf_exit(void)
 	if (wlan_static_prot)
 		kfree(wlan_static_prot);
 
-#if defined(CONFIG_BCMDHD_SDIO)
+#if defined(CONFIG_BCMDHD_1363_SDIO)
 	if (wlan_static_rxbuf)
 		kfree(wlan_static_rxbuf);
 
