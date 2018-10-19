@@ -267,6 +267,7 @@
 	imx6qdl-pico {
 		pinctrl_hog_1: hoggrp-1 {
 			fsl,pins = <
+				MX6QDL_PAD_ENET_RXD0__XTALOSC_REF_CLK_32K	0x000b0	/* wifi LPO 32K Hz clock */
 				MX6QDL_PAD_EIM_D22__GPIO3_IO22		0x80000000	/* USB OTG power */
 
 /* External pins on PICO connector */
@@ -287,7 +288,6 @@
 			fsl,pins = <
 				MX6QDL_PAD_GPIO_7__GPIO1_IO07			0x000b0		/* wifi-reg-on */
 				MX6QDL_PAD_GPIO_16__GPIO7_IO11			0x80000000	/* wifi-host-wake */
-				MX6QDL_PAD_ENET_RXD0__XTALOSC_REF_CLK_32K	0x000b0	/* wifi LPO 32K Hz clock */
 			>;
 		};
 
@@ -622,14 +622,14 @@
 &uart2 {  /* Bluetooth module */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart2>;
-	fsl,uart-has-rtscts;
+	uart-has-rtscts;
 	status = "okay";
 };
 
 &uart3 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart3>;
-	fsl,uart-has-rtscts;
+	uart-has-rtscts;
 	status = "okay";
 };
 
