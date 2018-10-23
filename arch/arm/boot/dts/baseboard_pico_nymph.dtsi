@@ -98,6 +98,11 @@
 		reg = <0x52>;
 		vref-supply = <&reg_2p5v>;
 	};
+
+	rtc: ds1337 {
+		compatible = "dallas,ds1337";
+		reg = <0x68>;
+	};
 };
 
 &PICO_I2CB {
@@ -106,11 +111,6 @@
 
 &PICO_I2CC {
 	status = "okay";
-
-	rtc: ds1337 {
-		compatible = "dallas,ds1337";
-		reg = <0x68>;
-	};
 };
 
 &PICO_CANA {
