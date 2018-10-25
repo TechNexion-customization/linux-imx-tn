@@ -773,7 +773,7 @@
 	};
 
 	ov5645_mipi: ov5645_mipi@3c {
-		compatible = "ovti,ov5645_mipisubdev";
+		compatible = "ovti,ov5645_mipi_v2";
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_mipi_csi>; /* GPIO_P69:mipi clock, GPIO_P67:power on, GPIO_P65:reset */
 		reg = <0x3c>;
