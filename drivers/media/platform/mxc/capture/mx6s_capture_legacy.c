@@ -1942,11 +1942,8 @@ static const u8 mx6s_fifo_rst = true;
 static const u8 mx6sl_fifo_rst = false;
 
 static const struct of_device_id mx6s_csi_dt_ids[] = {
-	{ .compatible = "fsl,imx6s-csi",
+	{ .compatible = "fsl,imx7d-csi",
 	  .data = &mx6s_fifo_rst,
-	},
-	{ .compatible = "fsl,imx6sl-csi",
-	  .data = &mx6sl_fifo_rst,
 	},
 	{ /* sentinel */ }
 };
