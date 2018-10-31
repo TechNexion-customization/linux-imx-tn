@@ -41,7 +41,7 @@
 
 / {
 	memory {
-		reg = <0x80000000 0x10000000>;
+		reg = <0x80000000 0x20000000>;
 	};
 
 	chosen {
@@ -56,49 +56,70 @@
 		status = "okay";
 	};
 
-	reg_2p5v: regulator-2p5v {
-		compatible = "regulator-fixed";
-		regulator-name = "2P5V";
-		regulator-min-microvolt = <2500000>;
-		regulator-max-microvolt = <2500000>;
+	regulators {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		reg_2p5v: regulator-2p5v {
+			compatible = "regulator-fixed";
+			regulator-name = "2P5V";
+			regulator-min-microvolt = <2500000>;
+			regulator-max-microvolt = <2500000>;
+		};
+
+		reg_3p3v: regulator-3p3v {
+			compatible = "regulator-fixed";
+			regulator-name = "3P3V";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+		};
+
+		reg_sd1_vmmc: regulator-sd1-vmmc {
+			compatible = "regulator-fixed";
+			regulator-name = "VSD_3V3";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			gpio = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+		};
+
+		reg_usb_otg_vbus: regulator-usb-otg-vbus {
+			compatible = "regulator-fixed";
+			pinctrl-names = "default";
+			pinctrl-0 = <&pinctrl_usb_otg1>;
+			regulator-name = "usb_otg_vbus";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio1 6 0>;
+		};
+
+		wlreg_on: fixedregulator@100 {
+			compatible = "regulator-fixed";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			regulator-name = "wlreg_on";
+			gpio = <&gpio4 8 0>;
+			startup-delay-us = <100>;
+			enable-active-high;
+			regulator-always-on;
+		};
 	};
 
-	reg_3p3v: regulator-3p3v {
-		compatible = "regulator-fixed";
-		regulator-name = "3P3V";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-	};
-
-	reg_sd1_vmmc: regulator-sd1-vmmc {
-		compatible = "regulator-fixed";
-		regulator-name = "VSD_3V3";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		gpio = <&gpio1 9 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-	};
-
-	reg_usb_otg_vbus: regulator-usb-otg-vbus {
-		compatible = "regulator-fixed";
+	bcmdhd_wlan_0: bcmdhd_wlan@0 {
+		compatible = "android,bcmdhd_wlan";
 		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_usb_otg1>;
-		regulator-name = "usb_otg_vbus";
-		regulator-min-microvolt = <5000000>;
-		regulator-max-microvolt = <5000000>;
-		gpio = <&gpio1 6 0>;
+		pinctrl-0 = <&pinctrl_wifi_ctrl>;
+		wlreg_on-supply = <&wlreg_on>;
 	};
 
-	reg_brcm: regulator-brcm {
-		compatible = "regulator-fixed";
-		enable-active-high;
-		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
+	bt_rfkill {
+		compatible = "net,rfkill-bcm43xx";
 		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_brcm_reg>;
-		regulator-name = "brcm_reg";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		startup-delay-us = <200000>;
+		pinctrl-0 = <&pinctrl_bt_ctrl>;
+		name = "bt_rfkill";
+		type = <2>;     /* bluetooth */
+		bt_rfkill_reset-gpios = <&gpio5 9 0>;
 	};
 
 	sound {
@@ -111,12 +132,6 @@
 			"MIC_IN", "Mic Jack",
 			"Mic Jack", "Mic Bias",
 			"Headphone Jack", "HP_OUT";
-	};
-
-	sys_mclk: clock-sys-mclk {
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <24576000>;
 	};
 };
 
@@ -167,6 +182,15 @@
 &reg_soc {
 	vin-supply = <&sw1b_reg>;
 	regulator-allow-bypass;
+};
+
+&gpc {
+	fsl,cpu_pupscr_sw2iso = <0x1>;
+	fsl,cpu_pupscr_sw = <0x0>;
+	fsl,cpu_pdnscr_iso2sw = <0x1>;
+	fsl,cpu_pdnscr_iso = <0x1>;
+	fsl,wdog-reset = <1>; /* watchdog select of reset source */
+	fsl,ldo-bypass = <0>;
 };
 
 &fec2 {
@@ -345,10 +369,11 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_usdhc2>;
 	no-1-8-v;
-	non-removable;
 	keep-power-in-suspend;
-	wakeup-source;
-	vmmc-supply = <&reg_brcm>;
+	non-removable;
+//	cd-post;
+	pm-ignore-notify;
+	wifi-host;
 	status = "okay";
 };
 
@@ -359,13 +384,6 @@
 };
 
 &iomuxc {
-	pinctrl_brcm_reg: brcmreggrp {
-		fsl,pins = <
-			MX6UL_PAD_NAND_DATA06__GPIO4_IO08	0x0000	/* WL_REG_ON */
-			MX6UL_PAD_NAND_DATA04__GPIO4_IO06	0x0000	/* WL_HOST_WAKE */
-		>;
-	};
-
 	pinctrl_enet2: enet2grp {
 		fsl,pins = <
 			MX6UL_PAD_ENET1_TX_DATA1__ENET2_MDIO	0x1b0b0
@@ -418,6 +436,21 @@
 		>;
 	};
 
+	pinctrl_wifi_ctrl: wifi_ctrlgrp {
+		fsl,pins = <
+			MX6UL_PAD_NAND_DATA06__GPIO4_IO08 0x03029 /* wifi-reg-on */
+			MX6UL_PAD_NAND_DATA04__GPIO4_IO06 0x79    /* wifi-host-wake */
+		>;
+	};
+
+	pinctrl_bt_ctrl: bt_ctrlgrp {
+		fsl,pins = <
+			MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09   0x79   /* bluetooth-reg-on */
+			MX6UL_PAD_SNVS_TAMPER8__GPIO5_IO08   0x79   /* bluetooth-wake */
+			MX6UL_PAD_NAND_DATA05__GPIO4_IO07    0x79   /* bluetooth-host-wake */
+		>;
+	};
+
 	pinctrl_lcdif_dat: lcdifdatgrp {
 		fsl,pins = <
 			MX6UL_PAD_LCD_DATA00__LCDIF_DATA00	0x79
@@ -453,8 +486,6 @@
 			MX6UL_PAD_LCD_ENABLE__LCDIF_ENABLE	0x79
 			MX6UL_PAD_LCD_HSYNC__LCDIF_HSYNC	0x79
 			MX6UL_PAD_LCD_VSYNC__LCDIF_VSYNC	0x79
-			/* LCD reset */
-			MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09	0x79
 		>;
 	};
 
