@@ -129,23 +129,26 @@
 			gpio = <&gpio3 22 GPIO_ACTIVE_HIGH>;
 		};
 
-		wlreg_on: fixedregulator@100 {
+
+		reg_wlan_pwr: wlan_pwr {
+			compatible = "regulator-fixed";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-name = "wlan_pwr";
+			pinctrl-0 = <&pinctrl_wifi_pwr>;
+			gpio = <&gpio6 0 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-boot-on;
+			regulator-always-on;
+		};
+
+		wlreg_on: wlreg_on {
 			compatible = "regulator-fixed";
 			regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
 			regulator-name = "wlreg_on";
 			gpio = <&gpio1 26 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
-		};
-	};
-
-	gpio-edm {
-		compatible = "gpio-edm";
-
-		wifi_on {
-			label = "wifi_on";
-			gpios = <&gpio6 0 1>;
-			dir   = "out";
 		};
 	};
 
@@ -421,9 +424,14 @@
 			>;
 		};
 
-		pinctrl_wifi_ctrl: wifi_ctrlgrp {
+		pinctrl_wifi_pwr: wifi_pwrgrp {
 			fsl,pins = <
 				MX6QDL_PAD_CSI0_DAT14__GPIO6_IO00	0x000b0		/* WIFI_ON, wifi-power */
+			>;
+		};
+
+		pinctrl_wifi_ctrl: wifi_ctrlgrp {
+			fsl,pins = <
 				MX6QDL_PAD_ENET_RXD1__GPIO1_IO26	0x000b0		/* wifi-reg-on */
 				MX6QDL_PAD_ENET_TXD1__GPIO1_IO29	0x80000000	/* wifi-host-wake - input */
 			>;
