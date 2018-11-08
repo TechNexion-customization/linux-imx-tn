@@ -64,6 +64,8 @@
 
 	bt_rfkill {
 		compatible = "net,rfkill-bcm43xx";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_bt_ctrl>;
 		name = "bt_rfkill";
 		type = <2>;     /* bluetooth */
 		bt_rfkill_reset-gpios = <&gpio7 12 0>;
