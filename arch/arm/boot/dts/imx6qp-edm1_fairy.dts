@@ -23,6 +23,12 @@
 	compatible = "fsl,edm-imx6q", "fsl,imx6q";
 };
 
+&ldb {
+	lvds-channel@0 {
+		crtc = "ipu2-di0";
+	};
+};
+
 &pre1 {
 	status = "okay";
 };
