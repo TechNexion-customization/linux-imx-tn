@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Technexion Ltd.
+ * Copyright 2018 TechNexion Ltd.
  *
  * Author: Tapani Utriainen <tapani@technexion.com>
  *	   Richard Hu <richard.hu@technexion.com>
@@ -144,8 +144,8 @@
 
 		wlreg_on: wlreg_on {
 			compatible = "regulator-fixed";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
 			regulator-name = "wlreg_on";
 			gpio = <&gpio1 26 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
@@ -396,31 +396,26 @@
 	imx6qdl-edm {
 		pinctrl_hog_1: hoggrp-1 {
 			fsl,pins = <
-				MX6QDL_PAD_GPIO_0__CCM_CLKO1     	0x130b0
-				MX6QDL_PAD_EIM_D22__USB_OTG_PWR		0x80000000	/* USB Power Enable */
-				MX6QDL_PAD_GPIO_2__GPIO1_IO02		0x80000000	/* USDHC1 CD */
-				MX6QDL_PAD_EIM_DA9__GPIO3_IO09		0x80000000	/* uSDHC3 CD */
-				MX6QDL_PAD_GPIO_0__CCM_CLKO1		0x000b0		/* SGTL5000 sys_mclk */
-				MX6QDL_PAD_GPIO_6__GPIO1_IO06		0x0b0b0		/* ov5640 mipi powerdown */
-				MX6QDL_PAD_GPIO_8__GPIO1_IO08		0x0b0b0		/* ov5640 mipi reset */
-				MX6QDL_PAD_GPIO_3__CCM_CLKO2		0x000b0		/* ov5640 mclk */
-				MX6QDL_PAD_EIM_D29__GPIO3_IO29   	0x1f0b1		/* RGMII PHY reset */
-				MX6QDL_PAD_ENET_RXD0__XTALOSC_REF_CLK_32K	0x000b0	/* wifi LPO 32K Hz clock */
-			>;
-		};
-
-		pinctrl_ext_gpio_fairy: ext-gpio-grp-fairy {
-			fsl,pins = <
-				MX6QDL_PAD_CSI0_DAT19__GPIO6_IO05  0x4001b0b5 /* GPIO6_05 EDM pin 255 */
-				MX6QDL_PAD_CSI0_DAT16__GPIO6_IO02  0x4001b0b5 /* GPIO6_02 EDM pin 256 */
-				MX6QDL_PAD_CSI0_DAT18__GPIO6_IO04  0x4001b0b5 /* GPIO6_04 EDM pin 257 */
-				MX6QDL_PAD_EIM_D27__GPIO3_IO27     0x4001b0b5 /* GPIO3_27 EDM pin 258 */
-				MX6QDL_PAD_EIM_D26__GPIO3_IO26     0x0001c840 /* GPIO3_26 EDM pin 259 */
-				MX6QDL_PAD_EIM_BCLK__GPIO6_IO31    0x4001b0b5 /* GPIO6_31 EDM pin 260 */
-				MX6QDL_PAD_CSI0_DAT17__GPIO6_IO03  0x4001b0b5 /* GPIO6_03 EDM pin 261, touch irq */
-				MX6QDL_PAD_ENET_RX_ER__GPIO1_IO24  0x4001b0b5 /* GPIO1_24 EDM pin 262 */
-				MX6QDL_PAD_GPIO_4__GPIO1_IO04      0x4001b0b5 /* GPIO1_04 EDM pin 263 touch irq */
-				MX6QDL_PAD_SD3_RST__GPIO7_IO08     0x4001b0b5 /* GPIO7_08 EDM pin 264, touch reset */
+				MX6QDL_PAD_GPIO_0__CCM_CLKO1			0x130b0
+				MX6QDL_PAD_EIM_D22__USB_OTG_PWR			0x80000000	/* USB Power Enable */
+				MX6QDL_PAD_GPIO_2__GPIO1_IO02			0x80000000	/* USDHC1 CD */
+				MX6QDL_PAD_EIM_DA9__GPIO3_IO09			0x80000000	/* uSDHC3 CD */
+				MX6QDL_PAD_GPIO_0__CCM_CLKO1			0x000b0		/* SGTL5000 sys_mclk */
+				MX6QDL_PAD_GPIO_6__GPIO1_IO06			0x0b0b0		/* ov5640 mipi powerdown */
+				MX6QDL_PAD_GPIO_8__GPIO1_IO08			0x0b0b0		/* ov5640 mipi reset */
+				MX6QDL_PAD_GPIO_3__CCM_CLKO2			0x000b0		/* ov5640 mclk */
+				MX6QDL_PAD_EIM_D29__GPIO3_IO29			0x1f0b1		/* RGMII PHY reset */
+				MX6QDL_PAD_ENET_RXD0__XTALOSC_REF_CLK_32K	0x000b0		/* wifi LPO 32K Hz clock */
+				MX6QDL_PAD_CSI0_DAT19__GPIO6_IO05		0x4001b0b5	/* GPIO6_05 EDM pin 255 */
+				MX6QDL_PAD_CSI0_DAT16__GPIO6_IO02		0x4001b0b5	/* GPIO6_02 EDM pin 256 */
+				MX6QDL_PAD_CSI0_DAT18__GPIO6_IO04		0x4001b0b5	/* GPIO6_04 EDM pin 257 */
+				MX6QDL_PAD_EIM_D27__GPIO3_IO27			0x4001b0b5	/* GPIO3_27 EDM pin 258 */
+				MX6QDL_PAD_EIM_D26__GPIO3_IO26			0x0001c840	/* GPIO3_26 EDM pin 259 */
+				MX6QDL_PAD_EIM_BCLK__GPIO6_IO31			0x4001b0b5	/* GPIO6_31 EDM pin 260 */
+				MX6QDL_PAD_CSI0_DAT17__GPIO6_IO03		0x4001b0b5	/* GPIO6_03 EDM pin 261, touch irq */
+				MX6QDL_PAD_ENET_RX_ER__GPIO1_IO24		0x4001b0b5	/* GPIO1_24 EDM pin 262 */
+				MX6QDL_PAD_GPIO_4__GPIO1_IO04			0x4001b0b5	/* GPIO1_04 EDM pin 263 touch irq */
+				MX6QDL_PAD_SD3_RST__GPIO7_IO08			0x4001b0b5	/* GPIO7_08 EDM pin 264, touch reset */
 			>;
 		};
 
