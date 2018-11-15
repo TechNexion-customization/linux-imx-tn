@@ -128,30 +128,6 @@
 	};
 };
 
-&EDM_LCD {
-	status = "okay";
-};
-
-&EDM_PWMB { /* Backlight_LCD */
-	status = "okay";
-};
-
-&EDM_SAIA {
-	status = "okay";
-};
-
-&EDM_SAIB {
-	status = "okay";
-};
-
-&EDM_UARTA {
-	status = "okay";
-};
-
-&EDM_SDIOA {
-	status = "okay";
-};
-
 &EDM_I2CA {
 	status = "okay";
 };
