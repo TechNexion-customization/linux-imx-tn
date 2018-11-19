@@ -56,6 +56,15 @@
 		status = "okay";
 	};
 
+	bt_rfkill {
+		compatible = "net,rfkill-gpio";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_bt_ctrl>;
+		name = "bt_rfkill";
+		type = "bluetooth";
+		shutdown-gpios = <&gpio5 9 GPIO_ACTIVE_HIGH>; /* BT_REG_ON: BT enable */
+	};
+
 	regulators {
 		compatible = "simple-bus";
 		#address-cells = <1>;
@@ -102,18 +111,6 @@
 			pinctrl-names = "default";
 			pinctrl-0 = <&pinctrl_wifi_ctrl>;
 			gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-always-on;
-		};
-
-		bt_on: bt_on {
-			compatible = "regulator-fixed";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			regulator-name = "bt_on";
-			pinctrl-names = "default";
-			pinctrl-0 = <&pinctrl_bt_ctrl>;
-			gpio = <&gpio5 9 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
 			regulator-always-on;
 		};
