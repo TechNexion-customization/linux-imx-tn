@@ -66,6 +66,15 @@
 		status = "okay";
 	};
 
+	bt_rfkill {
+		compatible = "net,rfkill-gpio";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_bt_ctrl>;
+		name = "bt_rfkill";
+		type = "bluetooth";
+		shutdown-gpios = <&gpio4 17 GPIO_ACTIVE_HIGH>; /* BT_REG_ON: BT enable */
+	};
+
 	regulators {
 		compatible = "simple-bus";
 		#address-cells = <1>;
@@ -139,18 +148,6 @@
 			pinctrl-names = "default";
 			pinctrl-0 = <&pinctrl_wifi_pwr_on>;
 			gpio = <&gpio2 29 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-always-on;
-		};
-
-		bt_on: bt_on {
-			compatible = "regulator-fixed";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			regulator-name = "bt_on";
-			pinctrl-names = "default";
-			pinctrl-0 = <&pinctrl_bt_ctrl>;
-			gpio = <&gpio4 17 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
 			regulator-always-on;
 		};
@@ -488,7 +485,7 @@
 		pinctrl_bt_ctrl: bt_ctrlgrp {
 			fsl,pins = <
 				MX7D_PAD_ECSPI1_MISO__GPIO4_IO18       0x55 /* sdio-reg-on */
-				MX7D_PAD_ECSPI1_MOSI__GPIO4_IO17       0x55 /* bluetooth-wake */
+				MX7D_PAD_ECSPI1_MOSI__GPIO4_IO17       0x55 /* bluetooth-reg-on */
 				MX7D_PAD_SD2_RESET_B__GPIO5_IO11       0x55 /* bluetooth-host-wake */
 			>;
 		};
