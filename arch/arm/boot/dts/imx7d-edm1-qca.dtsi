@@ -29,8 +29,6 @@
 /* SAI */
 #define EDM_AUDA_I2S_CHANNEL sai1
 #define EDM_AUDA_CLK_SRC clks IMX7D_AUDIO_MCLK_ROOT_CLK
-#define EDM_SAIA sai1
-#define EDM_SAIB sai2
 
 /* Bus definitions */
 #define EDM_I2CA i2c1
@@ -42,17 +40,6 @@
 
 #define EDM_CANA flexcan1
 #define EDM_CANB flexcan2
-
-#define EDM_SDIOA usdhc1
-#define EDM_SDIOB usdhc2
-#define EDM_SDIOC usdhc3
-
-#define EDM_UARTA uart6
-
-#define EDM_PWMA pwm1
-#define EDM_PWMB pwm3
-
-#define EDM_LCD lcdif
 
 #define EDM_PCIE pcie
 
@@ -593,7 +580,7 @@
 		     &pinctrl_lcdif_ctrl>;
 	lcd-supply = <&lcd_on>;
 	display = <&display0>;
-	status = "disabled";
+	status = "okay";
 
 	display0: display {
 		bits-per-pixel = <32>;
@@ -622,13 +609,13 @@
 &pwm1 {/* Backlight_LVDS */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_pwm1>;
-	status = "disabled";
+	status = "okay";
 };
 
 &pwm3 {/* Backlight_LCD */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_pwm3>;
-	status = "disabled";
+	status = "okay";
 };
 
 &sai1 {
@@ -638,7 +625,7 @@
 			  <&clks IMX7D_SAI1_ROOT_CLK>;
 	assigned-clock-parents = <&clks IMX7D_PLL_AUDIO_POST_DIV>;
 	assigned-clock-rates = <0>, <24576000>;
-	status = "disabled";
+	status = "okay";
 };
 
 &sai2 {
@@ -648,7 +635,7 @@
 			  <&clks IMX7D_SAI2_ROOT_CLK>;
 	assigned-clock-parents = <&clks IMX7D_PLL_AUDIO_POST_DIV>;
 	assigned-clock-rates = <0>, <24576000>;
-	status = "disabled";
+	status = "okay";
 };
 
 &sdma {
@@ -678,7 +665,7 @@
 	assigned-clocks = <&clks IMX7D_UART6_ROOT_SRC>;
 	assigned-clock-parents = <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
 	fsl,uart-has-rtscts;
-	status = "disabled";
+	status = "okay";
 };
 
 &uart7 { /* Bluetooth */
@@ -716,7 +703,7 @@
 	enable-sdio-wakeup;
 	no-1-8-v;
 	keep-power-in-suspend;
-	status = "disabled";
+	status = "okay";
 };
 
 &usdhc2 { /* Wifi Module */
