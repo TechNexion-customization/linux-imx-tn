@@ -20,13 +20,33 @@
 
 / {
 	model = "TechNexion EDM1-IMX6 Quad Plus and FAIRY baseboard";
-	compatible = "fsl,edm-imx6q", "fsl,imx6q";
+	compatible = "fsl,edm-imx6qp", "fsl,imx6qp";
 };
 
 &ldb {
 	lvds-channel@0 {
 		crtc = "ipu2-di0";
 	};
+};
+
+&mxcfb1 {
+	prefetch;
+	status = "okay";
+};
+
+&mxcfb2 {
+	prefetch;
+	status = "okay";
+};
+
+&mxcfb3 {
+	prefetch;
+	status = "okay";
+};
+
+&mxcfb4 {
+	prefetch;
+	status = "okay";
 };
 
 &pre1 {
