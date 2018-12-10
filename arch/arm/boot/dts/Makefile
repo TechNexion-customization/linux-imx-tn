@@ -530,6 +530,7 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
 	imx6ul-pico_nymph.dtb \
 	imx6ul-pico_pi.dtb \
 	imx6ul-tek3.dtb \
+	imx6ul-tep1.dtb \
 	imx6ul-tx6ul-0010.dtb \
 	imx6ul-tx6ul-0011.dtb \
 	imx6ul-tx6ul-mainboard.dtb \
