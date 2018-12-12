@@ -390,6 +390,7 @@ static const struct dsim_pll_pms pll_pms[] = {
 	{ DSIM_PLL_PMS(593408, 3, 66, 0), },
 	{ DSIM_PLL_PMS(445500, 1, 66, 2), },
 	{ DSIM_PLL_PMS(445056, 1, 66, 2), },
+	{ DSIM_PLL_PMS(420000, 1, 62, 2), },// for bit_clk=420
 	{ DSIM_PLL_PMS(324000, 3, 72, 1), },
 	{ DSIM_PLL_PMS(324324, 3, 72, 1), },
 	{ DSIM_PLL_PMS(162000, 3, 72, 2), },
@@ -1138,6 +1139,12 @@ int sec_mipi_dsim_check_pll_out(void *driver_private,
 	dsim->bit_clk = DIV_ROUND_UP_ULL(bit_clk, 1000);
 
 	dsim->pms = 0x4210;
+
+	/* hard-code to set DPHY clock for 420MHz bitclk */
+	dsim->pms = PLLCTRL_SET_P(1) |
+			    PLLCTRL_SET_M(62) |
+			    PLLCTRL_SET_S(2);
+
 	dsim->hpar = NULL;
 	if (dsim->panel)
 		return 0;
