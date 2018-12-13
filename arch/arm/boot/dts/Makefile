@@ -334,9 +334,11 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
 	imx6dl-edm1_fairy.dtb \
 	imx6dl-edm1_gnome.dtb \
 	imx6dl-edm1_tc0700.dtb \
+	imx6dl-edm1_tc1000.dtb \
 	imx6dl-edm1-qca_fairy.dtb \
 	imx6dl-edm1-qca_gnome.dtb \
 	imx6dl-edm1-qca_tc0700.dtb \
+	imx6dl-edm1-qca_tc1000.dtb \
 	imx6dl-edm2_gremlin.dtb \
 	imx6dl-dfi-fs700-m60.dtb \
 	imx6dl-gw51xx.dtb \
@@ -411,9 +413,11 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
 	imx6q-edm1_fairy.dtb \
 	imx6q-edm1_gnome.dtb \
 	imx6q-edm1_tc0700.dtb \
+	imx6q-edm1_tc1000.dtb \
 	imx6q-edm1-qca_fairy.dtb \
 	imx6q-edm1-qca_gnome.dtb \
 	imx6q-edm1-qca_tc0700.dtb \
+	imx6q-edm1-qca_tc1000.dtb \
 	imx6q-edm2_gremlin.dtb \
 	imx6q-gk802.dtb \
 	imx6q-gw51xx.dtb \
@@ -470,9 +474,11 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
 	imx6qp-edm1_fairy.dtb \
 	imx6qp-edm1_gnome.dtb \
 	imx6qp-edm1_tc0700.dtb \
+	imx6qp-edm1_tc1000.dtb \
 	imx6qp-edm1-qca_fairy.dtb \
 	imx6qp-edm1-qca_gnome.dtb \
 	imx6qp-edm1-qca_tc0700.dtb \
+	imx6qp-edm1-qca_tc1000.dtb \
 	imx6qp-nitrogen6_max.dtb \
 	imx6qp-sabreauto.dtb \
 	imx6qp-sabreauto-ecspi.dtb \
