@@ -23,6 +23,8 @@
 #define EDM_EXT_GPIO_P262 gpio1 24
 #define EDM_EXT_GPIO_P263 gpio1 4
 #define EDM_EXT_GPIO_P264 gpio7 8
+#define EDM_EXT_LVDS_PWR  gpio5 31
+#define EDM_EXT_USB_HUB_RESET gpio7 12
 
 /* SAI */
 #define EDM_AUDA_I2S_CHANNEL ssi1
@@ -412,6 +414,8 @@
 				MX6QDL_PAD_ENET_RX_ER__GPIO1_IO24		0x4001b0b5	/* GPIO1_24 EDM pin 262 */
 				MX6QDL_PAD_GPIO_4__GPIO1_IO04			0x4001b0b5	/* GPIO1_04 EDM pin 263 touch irq */
 				MX6QDL_PAD_SD3_RST__GPIO7_IO08			0x4001b0b5	/* GPIO7_08 EDM pin 264, touch reset */
+				MX6QDL_PAD_CSI0_DAT13__GPIO5_IO31		0x4001b0b5	/* GPIO5_31 LVDS POWER */
+				MX6QDL_PAD_GPIO_17__GPIO7_IO12			0x4001b0b5	/* GPIO7_12 USB Hub reset*/
 			>;
 		};
 
@@ -712,7 +716,6 @@
 &pcie {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_pcie_reset>;
-	status = "okay";
 };
 
 &pwm3 {
