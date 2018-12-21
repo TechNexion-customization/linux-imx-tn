@@ -692,6 +692,12 @@
 		reg = <0x57>;
 		status = "okay";
 	};
+
+	bme680@77 {
+		compatible = "bme,bme680";
+		reg = <0x77>;
+		status = "okay";
+	};
 };
 
 &uart1 { /* console */
