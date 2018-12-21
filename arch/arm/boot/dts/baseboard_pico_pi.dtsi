@@ -103,6 +103,12 @@
 		VDDA-supply = <&reg_2p5v>;
 		VDDIO-supply = <&reg_3p3v>;
 	};
+
+	bme680@77 {
+		compatible = "bme,bme680";
+		reg = <0x77>;
+		status = "okay";
+	};
 };
 
 &PICO_I2CB {
