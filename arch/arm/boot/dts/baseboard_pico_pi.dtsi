@@ -104,6 +104,12 @@
 		VDDIO-supply = <&reg_3p3v>;
 	};
 
+	bno055@28 {
+		compatible = "bno,bno055";
+		reg = <0x28>;
+		status = "okay";
+	};
+
 	bme680@77 {
 		compatible = "bme,bme680";
 		reg = <0x77>;
