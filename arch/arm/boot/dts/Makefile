@@ -587,8 +587,14 @@ dtb-$(CONFIG_SOC_IMX6ULL) += \
 	imx6ull-9x9-evk-btwifi.dtb \
 	imx6ull-9x9-evk-btwifi-oob.dtb \
 	imx6ull-9x9-evk-ldo.dtb \
-	imx6ull-pico_pi.dtb \
-	imx6ull-pico-qca_pi.dtb
+	imx6ull-pico-qca_dwarf.dtb \
+	imx6ull-pico-qca_hobbit.dtb \
+	imx6ull-pico-qca_nymph.dtb \
+	imx6ull-pico-qca_pi.dtb \
+	imx6ull-pico_dwarf.dtb \
+	imx6ull-pico_hobbit.dtb \
+	imx6ull-pico_nymph.dtb \
+	imx6ull-pico_pi.dtb
 dtb-$(CONFIG_SOC_IMX6SLL) += \
 	imx6sll-lpddr2-arm2.dtb \
 	imx6sll-lpddr3-arm2.dtb \

@@ -1,8 +1,8 @@
 /*
- * Copyright 2016 Technexion Ltd.
+ * Copyright 2018 TechNexion Ltd.
  *
  * Author: Richard Hu <richard.hu@technexion.com>
- *	   Tapani Utriainen <tapani@technexion.com>
+ *         Tapani Utriainen <tapani@technexion.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -18,6 +18,6 @@
 #include "baseboard_pico_pi.dtsi"
 
 / {
-	model = "TechNexion PICO-IMX6ULL-EMMC and PI baseboard";
-	compatible = "fsl,imx6ull-pico", "fsl,imx6ull";
+	model = "TechNexion PICO-IMX6ULL with QCA WLAN module and PI baseboard";
+	compatible = "fsl,pico-imx6ull", "fsl,imx6ull";
 };
