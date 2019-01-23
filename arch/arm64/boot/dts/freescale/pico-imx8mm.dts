@@ -280,13 +280,6 @@
 			>;
 		};
 
-		pinctrl_spdif1: spdif1grp {
-			fsl,pins = <
-				MX8MM_IOMUXC_SPDIF_TX_SPDIF1_OUT	0xd6
-				MX8MM_IOMUXC_SPDIF_RX_SPDIF1_IN		0xd6
-			>;
-		};
-
 		pinctrl_uart1: uart1grp {
 			fsl,pins = <
 				MX8MM_IOMUXC_UART1_RXD_UART1_DCE_RX	0x140
@@ -716,24 +709,6 @@
 			<&clk IMX8MM_CLK_SAI3_DIV>;
 	assigned-clock-parents = <&clk IMX8MM_AUDIO_PLL1_OUT>;
 	assigned-clock-rates = <0>, <24576000>;
-	status = "okay";
-};
-
-&spdif1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_spdif1>;
-	assigned-clocks = <&clk IMX8MM_CLK_SPDIF1_SRC>,
-			<&clk IMX8MM_CLK_SPDIF1_DIV>;
-	assigned-clock-parents = <&clk IMX8MM_AUDIO_PLL1_OUT>;
-	assigned-clock-rates = <0>, <24576000>;
-	clocks = <&clk IMX8MM_CLK_AUDIO_AHB_DIV>, <&clk IMX8MM_CLK_24M>,
-		<&clk IMX8MM_CLK_SPDIF1_DIV>, <&clk IMX8MM_CLK_DUMMY>,
-		<&clk IMX8MM_CLK_DUMMY>, <&clk IMX8MM_CLK_DUMMY>,
-		<&clk IMX8MM_CLK_AUDIO_AHB_DIV>, <&clk IMX8MM_CLK_DUMMY>,
-		<&clk IMX8MM_CLK_DUMMY>, <&clk IMX8MM_CLK_DUMMY>,
-		<&clk IMX8MM_AUDIO_PLL1_OUT>, <&clk IMX8MM_AUDIO_PLL2_OUT>;
-	clock-names = "core", "rxtx0", "rxtx1", "rxtx2", "rxtx3",
-		"rxtx4", "rxtx5", "rxtx6", "rxtx7", "spba", "pll8k", "pll11k";
 	status = "okay";
 };
 
