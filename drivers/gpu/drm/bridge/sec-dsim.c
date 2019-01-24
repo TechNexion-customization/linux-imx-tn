@@ -860,9 +860,13 @@ static int sec_mipi_dsim_config_pll(struct sec_mipi_dsim *dsim)
 	//pllctrl |= (DSIM_PLL_P(4) | DSIM_PLL_M(31) | DSIM_PLL_S(0)) | PLLCTRL_PLLEN;//doesn't show anything
 	//pllctrl |= (DSIM_PLL_P(4) | DSIM_PLL_M(35) | DSIM_PLL_S(0)) | PLLCTRL_PLLEN;//doesn't show anything
 	//pllctrl |= (DSIM_PLL_P(4) | DSIM_PLL_M(70) | DSIM_PLL_S(1)) | PLLCTRL_PLLEN;//doesn't show anything, close to the time of each bit in LP mode on PICO-IMX8M
-	pllctrl |= (DSIM_PLL_P(4) | DSIM_PLL_M(71) | DSIM_PLL_S(1)) | PLLCTRL_PLLEN;//doesn't show anything, close to the time of each bit in LP mode on PICO-IMX8M
+	//pllctrl |= (DSIM_PLL_P(4) | DSIM_PLL_M(71) | DSIM_PLL_S(1)) | PLLCTRL_PLLEN;//doesn't show anything, close to the time of each bit in LP mode on PICO-IMX8M
 	//pllctrl |= (DSIM_PLL_P(4) | DSIM_PLL_M(37) | DSIM_PLL_S(0)) | PLLCTRL_PLLEN;
 
+	//For AUO 10.1 inch G101UAN02
+	//For Fout=449MHz, PMS value=(1, 33, 1), (2, 66, 1)
+	//pllctrl |= (DSIM_PLL_P(1) | DSIM_PLL_M(33) | DSIM_PLL_S(1)) | PLLCTRL_PLLEN;//no picture
+	pllctrl |= (DSIM_PLL_P(1) | DSIM_PLL_M(39) | DSIM_PLL_S(1)) | PLLCTRL_PLLEN;//no picture
 
 	dsim_write(dsim, pllctrl, DSIM_PLLCTRL);
 
@@ -1161,12 +1165,12 @@ int sec_mipi_dsim_check_pll_out(void *driver_private,
 	dsim->pix_clk = DIV_ROUND_UP_ULL(pix_clk, 1000);
 	dsim->bit_clk = DIV_ROUND_UP_ULL(bit_clk, 1000);
 
-	dsim->pms = 0x4210;
+	//dsim->pms = 0x4210;
 
 	/* hard-code to set DPHY clock for 420MHz bitclk */
-	dsim->pms = PLLCTRL_SET_P(1) |
-			    PLLCTRL_SET_M(62) |
-			    PLLCTRL_SET_S(2);
+	//dsim->pms = PLLCTRL_SET_P(1) |
+	//		    PLLCTRL_SET_M(62) |
+	//		    PLLCTRL_SET_S(2);
 
 	dsim->hpar = NULL;
 	if (dsim->panel)
