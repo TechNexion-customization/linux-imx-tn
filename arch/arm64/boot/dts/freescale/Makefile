@@ -115,6 +115,7 @@ dtb-$(CONFIG_ARCH_FSL_IMX8MQ) += fsl-imx8mq-ddr3l-arm2.dtb \
 				 fsl-imx8mq-evk-dp.dtb \
 				 fsl-imx8mq-evk-edp.dtb \
 				 pico-imx8m.dtb \
+				 pico-imx8m-dcss-g101uan02.dtb \
 				 pico-imx8m-dcss-ili9881c.dtb
 dtb-$(CONFIG_ARCH_FSL_IMX8MM) += axon-imx8mm.dtb \
 				 flex-imx8mm.dtb \
