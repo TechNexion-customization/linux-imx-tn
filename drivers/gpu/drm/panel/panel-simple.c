@@ -2284,6 +2284,8 @@ static const struct panel_desc_dsi auo_g101uan02 = {
 };
 
 static const struct drm_display_mode auo_g080uan01_mode = {
+#if 1
+	//.clock = 159400,
 	.clock = 159400,
 	.hdisplay = 1200,
 	.hsync_start = 1200 + 80,
@@ -2295,6 +2297,20 @@ static const struct drm_display_mode auo_g080uan01_mode = {
 	.vtotal = 1920 + 35 + 1 + 25,
 	.vrefresh = 60,
 };
+#else
+	.clock = 149900,
+	.hdisplay = 1200,
+	.hsync_start = 1200 + 40,
+	.hsync_end = 1200 + 40 + 1,
+	.htotal = 1200 + 40 + 1 + 40,
+	.vdisplay = 1200,
+	.vsync_start = 1920 + 25,
+	.vsync_end = 1920 + 25 + 1,
+	.vtotal = 1920 + 25 + 1 + 25,
+	.vrefresh = 60,
+};
+#endif
+
 
 static const struct panel_desc_dsi auo_g080uan01 = {
 	.desc = {
