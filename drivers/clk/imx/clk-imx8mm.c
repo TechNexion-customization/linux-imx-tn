@@ -84,6 +84,8 @@ static const struct imx_int_pll_rate_table imx8mm_audiopll_tbl[] = {
 static const struct imx_int_pll_rate_table imx8mm_videopll_tbl[] = {
 	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
 	PLL_1443X_RATE(594000000U, 198, 2, 2, 0),
+	PLL_1443X_RATE(486000000U, 162, 2, 2, 0),
+	PLL_1443X_RATE(540000000U, 180, 2, 2, 0),
 };
 
 static const struct imx_int_pll_rate_table imx8mm_drampll_tbl[] = {
@@ -964,7 +966,9 @@ static void __init imx8mm_clocks_init(struct device_node *ccm_node)
 
 	/* increase NOC clock to design target */
 	clk_set_rate(clks[IMX8MM_SYS_PLL3], 750000000);
-	clk_set_rate(clks[IMX8MM_VIDEO_PLL1], 594000000);
+	//clk_set_rate(clks[IMX8MM_VIDEO_PLL1], 594000000);
+	clk_set_rate(clks[IMX8MM_VIDEO_PLL1], 486000000);
+	// clk_set_rate(clks[IMX8MM_VIDEO_PLL1], 540000000);
 	clk_set_parent(clks[IMX8MM_CLK_NOC_SRC], clks[IMX8MM_SYS_PLL3_OUT]);
 	clk_set_parent(clks[IMX8MM_CLK_PCIE1_CTRL_SRC], clks[IMX8MM_SYS_PLL2_250M]);
 	clk_set_parent(clks[IMX8MM_CLK_PCIE1_PHY_SRC], clks[IMX8MM_SYS_PLL2_100M]);

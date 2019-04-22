@@ -841,6 +841,7 @@ static int sec_mipi_dsim_config_pll(struct sec_mipi_dsim *dsim)
 
 	/* TODO: config dp/dn swap if requires */
 
+#if 0
 	//pllctrl |= PLLCTRL_SET_PMS(dsim->pms) | PLLCTRL_PLLEN;
 
 	//For RM67191,
@@ -869,6 +870,10 @@ static int sec_mipi_dsim_config_pll(struct sec_mipi_dsim *dsim)
 	pllctrl |= (DSIM_PLL_P(1) | DSIM_PLL_M(39) | DSIM_PLL_S(1)) | PLLCTRL_PLLEN;//no picture
 
 	dsim_write(dsim, pllctrl, DSIM_PLLCTRL);
+#else
+	pllctrl |= PLLCTRL_SET_PMS(dsim->pms) | PLLCTRL_PLLEN;
+	dsim_write(dsim, pllctrl, DSIM_PLLCTRL);
+#endif
 
 	ret = wait_for_completion_timeout(&dsim->pll_stable, HZ / 10);
 	if (!ret) {
@@ -902,7 +907,16 @@ static void sec_mipi_dsim_set_main_mode(struct sec_mipi_dsim *dsim)
 	uint32_t mdresol = 0, mvporch = 0, mhporch = 0, msync = 0;
 	struct videomode *vmode = &dsim->vmode;
 
-	mdresol |= MDRESOL_SET_MAINVRESOL(vmode->vactive) |
+	
+	uint32_t pixel_clk = vmode->pixelclock;
+	//uint32_t pixel_clk= 149900000;
+	// uint32_t pixel_clk= 159400000;
+	uint32_t bit_clk =  dsim->bit_clk * 1000;
+	//uint32_t bit_clk =  904000000;
+	//uint32_t bit_clk =  958000000;
+	printk("bit_clk %d, pixelclock %d\n", bit_clk, vmode->pixelclock);  
+
+	mdresol |= MDRESOL_SET_MAINVRESOL(vmode->vactive-1) |
 		   MDRESOL_SET_MAINHRESOL(vmode->hactive);
 	dsim_write(dsim, mdresol, DSIM_MDRESOL);
 
@@ -922,8 +936,12 @@ static void sec_mipi_dsim_set_main_mode(struct sec_mipi_dsim *dsim)
 		hbp_wc = dsim->hpar->hbp_wc;
 	}
 
+	/*
 	mhporch |= MHPORCH_SET_MAINHFP(hfp_wc) |
 		   MHPORCH_SET_MAINHBP(hbp_wc);
+	*/
+	mhporch |= MHPORCH_SET_MAINHFP(/*hfp_wc*/vmode->hfront_porch*(bit_clk/1000/8)/(pixel_clk/1000) /2) |
+		   MHPORCH_SET_MAINHBP(/*hbp_wc*/vmode->hback_porch * (bit_clk/1000/8)/(pixel_clk/1000));
 
 	dsim_write(dsim, mhporch, DSIM_MHPORCH);
 
@@ -934,7 +952,8 @@ static void sec_mipi_dsim_set_main_mode(struct sec_mipi_dsim *dsim)
 		hsa_wc = dsim->hpar->hsa_wc;
 
 	msync |= MSYNC_SET_MAINVSA(vmode->vsync_len) |
-		 MSYNC_SET_MAINHSA(hsa_wc);
+		 /* MSYNC_SET_MAINHSA(hsa_wc);*/
+		MSYNC_SET_MAINHSA(/*hsa_wc*/vmode->hsync_len * (bit_clk/1000/8)/(pixel_clk/1000));
 
 	dsim_write(dsim, msync, DSIM_MSYNC);
 }
@@ -1165,12 +1184,26 @@ int sec_mipi_dsim_check_pll_out(void *driver_private,
 	dsim->pix_clk = DIV_ROUND_UP_ULL(pix_clk, 1000);
 	dsim->bit_clk = DIV_ROUND_UP_ULL(bit_clk, 1000);
 
-	//dsim->pms = 0x4210;
-
 	/* hard-code to set DPHY clock for 420MHz bitclk */
 	//dsim->pms = PLLCTRL_SET_P(1) |
 	//		    PLLCTRL_SET_M(62) |
 	//		    PLLCTRL_SET_S(2);
+	if (pix_clk == 159400000) {
+		dsim->pms = PLLCTRL_SET_P(1) |
+				PLLCTRL_SET_M(40) |
+			    PLLCTRL_SET_S(0);
+	}
+	else if (pix_clk == 149900000) {
+		dsim->pms = PLLCTRL_SET_P(2) |
+			    PLLCTRL_SET_M(67) |
+			    PLLCTRL_SET_S(0);
+	}
+	else {
+		dsim->pms = 0x4210;
+	}
+	printk("pix_clk %d, pms : 0x%x\n", pix_clk, dsim->pms);
+
+
 
 	dsim->hpar = NULL;
 	if (dsim->panel)
