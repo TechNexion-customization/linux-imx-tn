@@ -291,13 +291,14 @@ static int ili9881c_send_cmd_data(struct ili9881c *ctx, u8 cmd, u8 data)
 static int ili9881c_prepare(struct drm_panel *panel)
 {
 	struct ili9881c *ctx = panel_to_ili9881c(panel);
-
-
+	int i;
 	/* Power the panel */
 	if (!IS_ERR(ctx->power)) {
 		gpiod_set_value(ctx->power, 1);
 		msleep(5);
 	}
+
+#if 0
 	/* And reset it */
 	if (!IS_ERR(ctx->reset)) {
 		gpiod_set_value(ctx->reset, 1);
@@ -306,6 +307,27 @@ static int ili9881c_prepare(struct drm_panel *panel)
 		gpiod_set_value(ctx->reset, 0);
 		msleep(20);
 	}
+#else
+	msleep(5);
+	gpiod_set_value(ctx->reset, 0);
+	usleep_range(5, 10);
+	/* tREST short than 5us  */
+	gpiod_set_value(ctx->reset, 1);
+	for(i =0; i < 50/*10*/; i++);
+	gpiod_set_value(ctx->reset, 0);
+	
+	// for(i =0; i < 5000; i++);
+	usleep_range(5, 10);
+	
+	/* tRESW min 10us */
+	gpiod_set_value(ctx->reset, 1); 
+	usleep_range(10, 15);
+	gpiod_set_value(ctx->reset, 0);
+	
+	/* TRt min 5ms */
+	usleep_range(5000, 10000);
+	//usleep_range(25000, 30000);
+#endif
 
 	return 0;
 }
@@ -369,6 +391,7 @@ static int ili9881c_unprepare(struct drm_panel *panel)
 	return 0;
 }
 
+#if 0
 static const struct drm_display_mode default_mode = {
 	.clock		= 62000,
 	.vrefresh	= 60,
@@ -383,6 +406,23 @@ static const struct drm_display_mode default_mode = {
 	.vsync_end	= 1280 + 10 + 10,
 	.vtotal		= 1280 + 10 + 10 + 20,
 };
+#else
+// videomode_from_timing(&rad_default_timing, &panel->vm);
+static const struct drm_display_mode default_mode = {
+	.clock		= 75000,
+	.vrefresh	= 60,
+
+	.hdisplay	= 720,
+	.hsync_start	= 720 + 33,
+	.hsync_end	= 720 + 33 + 100,
+	.htotal	= 720 + 33 + 100 + 100,
+
+	.vdisplay	= 1280,
+	.vsync_start	= 1280 + 2,
+	.vsync_end	= 1280 + 2 + 30,
+	.vtotal	= 1280 + 2 + 30 + 20,
+};
+#endif
 
 static int ili9881c_get_modes(struct drm_panel *panel)
 {
@@ -449,6 +489,9 @@ static int ili9881c_dsi_probe(struct mipi_dsi_device *dsi)
 	if (IS_ERR(ctx->reset)) {
 		dev_err(&dsi->dev, "Couldn't get our reset GPIO\n");
 	}
+	//
+	gpiod_set_value(ctx->reset, 1);
+
 
 	ret = drm_panel_add(&ctx->panel);
 	if (ret < 0)
