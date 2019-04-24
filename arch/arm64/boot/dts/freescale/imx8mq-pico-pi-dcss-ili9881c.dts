@@ -1,7 +1,8 @@
 /*
  * Copyright 2018 Technexion Ltd.
+ * Copyright 2017 NXP
  *
- * Author: Richard Hu <richard.hu@technexion.com>, Po Cheng <po.cheng@technexion.com>
+ * Author: Richard Hu <richard.hu@technexion.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  */
 
-#include "pico-imx8m.dts"
+#include "imx8mq-pico-pi.dts"
 
 / {
 	backlight_mipi {
@@ -22,23 +23,41 @@
 	};
 };
 
-&lcdif {
-	status = "okay";
+&hdmi {
+	status = "disabled";
+};
 
-	assigned-clocks = <&clk IMX8MQ_CLK_LCDIF_PIXEL>,
+&dcss {
+	status = "okay";
+	disp-dev = "mipi_disp";
+
+	clocks = <&clk IMX8MQ_CLK_DISP_APB_ROOT>,
+		 <&clk IMX8MQ_CLK_DISP_AXI_ROOT>,
+		 <&clk IMX8MQ_CLK_DISP_RTRM_ROOT>,
+		 <&clk IMX8MQ_CLK_DC_PIXEL>,
+		 <&clk IMX8MQ_CLK_DUMMY>,
+		 <&clk IMX8MQ_CLK_DISP_DTRC>;
+	clock-names = "apb", "axi", "rtrm", "pix_div", "pix_out", "dtrc";
+
+	assigned-clocks = <&clk IMX8MQ_CLK_DC_PIXEL>,
+			  <&clk IMX8MQ_CLK_DISP_AXI>,
+			  <&clk IMX8MQ_CLK_DISP_RTRM>,
 			  <&clk IMX8MQ_VIDEO_PLL1_REF_SEL>,
 			  <&clk IMX8MQ_VIDEO_PLL1>;
 	assigned-clock-parents = <&clk IMX8MQ_VIDEO_PLL1_OUT>,
+				 <&clk IMX8MQ_SYS1_PLL_800M>,
+				 <&clk IMX8MQ_SYS1_PLL_800M>,
 				 <&clk IMX8MQ_CLK_25M>;
-	assigned-clock-rate = <120000000>,
-			      <0>,
-			      <599999999>;
+	assigned-clock-rates = <600000000>,
+			       <800000000>,
+			       <0>,
+			       <400000000>,
+			       <599999999>;
 
-	/* important to overwrite max-res otherwise DRM lcdif will fail to find a suitable connector */
-	max-res = <4096>, <4096>;
+	dcss_disp0: port@0 {
+		reg = <0>;
 
-	port@0 {
-		lcdif_mipi_dsi: mipi-dsi-endpoint {
+		dcss_disp0_mipi_dsi: mipi_dsi {
 			remote-endpoint = <&mipi_dsi_in>;
 		};
 	};
@@ -50,11 +69,8 @@
 
 &mipi_dsi {
 	status = "okay";
-	as_bridge;
-	sync-pol = <1>;
 	pwr-delay = <50>;
 	best-match;
-
 	assigned-clocks = <&clk IMX8MQ_CLK_DSI_PHY_REF>,
 			  <&clk IMX8MQ_CLK_DSI_CORE>,
 			  <&clk IMX8MQ_VIDEO_PLL1_REF_SEL>,
@@ -68,10 +84,11 @@
 			       <599999999>;
 
 	port@1 {
-		mipi_dsi_in: lcdif-endpoint {
-			remote-endpoint = <&lcdif_mipi_dsi>;
+		mipi_dsi_in: endpoint {
+			remote-endpoint = <&dcss_disp0_mipi_dsi>;
 		};
 	};
+
 };
 
 &mipi_dsi_bridge {
@@ -84,7 +101,7 @@
 		reg = <0>;
 		dsi-lanes = <4>;
 		port {
-			panel_in: endpoint {
+			panel1_in: endpoint {
 				remote-endpoint = <&mipi_dsi_bridge_out>;
 			};
 		};
@@ -92,18 +109,17 @@
 
 	port@1 {
 		mipi_dsi_bridge_out: endpoint {
-			remote-endpoint = <&panel_in>;
+			remote-endpoint = <&panel1_in>;
 		};
 	};
 };
 
-&i2c2 {
+&i2c3 {
 	polytouch: edt-ft5x06@38 {
-		status = "okay";
 		compatible = "edt,edt-ft5x06";
 		reg = <0x38>;
 		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_ft5336_touch_irq &pinctrl_ft5336_touch_rst>;
+		pinctrl-0 = <&pinctrl_touch_irq &pinctrl_touch_rst>;
 		interrupt-parent = <&gpio1>;
 		interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
 		reset-gpios = <&gpio3 18 GPIO_ACTIVE_LOW>;

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  */
 
-#include "pico-imx8m.dts"
+#include "imx8mq-pico-pi.dts"
 
 / {
 	backlight_mipi {
