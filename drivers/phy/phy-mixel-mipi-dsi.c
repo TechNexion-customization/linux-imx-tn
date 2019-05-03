@@ -362,7 +362,7 @@ static int mixel_mipi_phy_init(struct phy *phy)
 		mutex_unlock(&priv->lock);
 		return -EINVAL;
 	}
-	dev_dbg(&phy->dev, "Using CM:%u CN:%u CO:%u\n",
+	/*dev_dbg(&phy->dev,*/printk( "Using CM:%u CN:%u CO:%u\n",
 		 priv->divider.cm, priv->divider.cn, priv->divider.co);
 	phy_write(phy, CM(priv->divider.cm), DPHY_CM);
 	phy_write(phy, CN(priv->divider.cn), DPHY_CN);

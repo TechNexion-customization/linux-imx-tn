@@ -541,7 +541,8 @@ static enum drm_mode_status nwl_dsi_bridge_mode_valid(struct drm_bridge *bridge,
 
 	DRM_DEV_DEBUG_DRIVER(dsi->dev, "Validating mode:");
 	drm_mode_debug_printmodeline(mode);
-
+	printk("mode->clock %d\n", mode->clock);
+#if 1
 	for (i = 0; i < num_modes; i++)
 		if (mode->clock == valid_clocks[i]) {
 			clock_ok = true;
@@ -553,7 +554,7 @@ static enum drm_mode_status nwl_dsi_bridge_mode_valid(struct drm_bridge *bridge,
 
 	if (!nwl_dsi_mode_probe(dsi, mode))
 		return MODE_NOCLOCK;
-
+#endif
 	return MODE_OK;
 }
 
@@ -609,7 +610,7 @@ static void nwl_dsi_bridge_mode_set(struct drm_bridge *bridge,
 	clk_set_rate(dsi->phy_ref.clk, config->phyref_rate);
 	actual_phy_rate = clk_get_rate(dsi->phy_ref.clk);
 	dsi->dsi_device->lanes = config->lanes;
-	DRM_DEV_DEBUG_DRIVER(dsi->dev,
+	/*DRM_DEV_DEBUG_DRIVER(dsi->dev,*/printk(
 		"Using phy_ref rate: %u (actual: %u), "
 		"bitclock: %lu, lanes: %u\n",
 		config->phyref_rate, actual_phy_rate,
