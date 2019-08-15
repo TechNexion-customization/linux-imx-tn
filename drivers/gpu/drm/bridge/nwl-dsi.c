@@ -388,7 +388,12 @@ static void nwl_dsi_config_dpi(struct nwl_mipi_dsi *dsi)
 		nwl_dsi_write(dsi, VIDEO_MODE, 0x2);
 		nwl_dsi_write(dsi, PIXEL_FIFO_SEND_LEVEL, 256);
 	} else {
-		nwl_dsi_write(dsi, VIDEO_MODE, 0x0);
+               if (dsi_device->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+		  nwl_dsi_write(dsi, VIDEO_MODE, 0x0);
+               else {
+                  printk("liutest sync event mode\n");
+                  nwl_dsi_write(dsi, VIDEO_MODE, 0x1);
+                }
 		nwl_dsi_write(dsi, PIXEL_FIFO_SEND_LEVEL, vm.hactive);
 	}
 

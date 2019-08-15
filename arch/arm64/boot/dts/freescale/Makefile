@@ -128,6 +128,7 @@ dtb-$(CONFIG_ARCH_FSL_IMX8MQ) += fsl-imx8mq-ddr3l-arm2.dtb \
 				 imx8mq-pico-pi-dcss-g080uan01.dtb \
 				 imx8mq-pico-pi-dcss-g101uan02.dtb \
 				 imx8mq-pico-pi-dcss-ili9881c.dtb \
+				 imx8mq-pico-pi-lcdif-ili9881c.dtb \
 				 imx8mq-pico-pi-dcss-sn65dsi84-hj070na.dtb \
 				 imx8mq-pico-pi-dcss-sn65dsi84-m101nwwb.dtb \
 				 imx8mq-pico-pi-dcss-sn65dsi84-g156xw01.dtb \

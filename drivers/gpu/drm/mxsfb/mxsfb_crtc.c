@@ -405,6 +405,7 @@ static void mxsfb_crtc_mode_set_nofb(struct mxsfb_drm_private *mxsfb)
 		  VDCTRL0_VSYNC_PERIOD_UNIT |
 		  VDCTRL0_VSYNC_PULSE_WIDTH_UNIT |
 		  VDCTRL0_SET_VSYNC_PULSE_WIDTH(vsync_pulse_len);
+#if 0
 	if (m->flags & DRM_MODE_FLAG_PHSYNC)
 		vdctrl0 |= VDCTRL0_HSYNC_ACT_HIGH;
 	if (m->flags & DRM_MODE_FLAG_PVSYNC)
@@ -420,6 +421,9 @@ static void mxsfb_crtc_mode_set_nofb(struct mxsfb_drm_private *mxsfb)
 	 */
 	if (bus_flags & DRM_BUS_FLAG_PIXDATA_POSEDGE)
 		vdctrl0 |= VDCTRL0_DOTCLK_ACT_FALLING;
+#endif
+
+	printk("liutest vdctrl0 0x%x\n", vdctrl0);
 
 	writel(vdctrl0, mxsfb->base + LCDC_VDCTRL0);
 
