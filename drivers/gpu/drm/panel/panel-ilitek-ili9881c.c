@@ -293,6 +293,7 @@ static int ili9881c_send_cmd_data(struct ili9881c *ctx, u8 cmd, u8 data)
 static int ili9881c_prepare(struct drm_panel *panel)
 {
 	struct ili9881c *ctx = panel_to_ili9881c(panel);
+	int i;
 
 	/* Power the panel */
 	if (!IS_ERR(ctx->power)) {
@@ -301,11 +302,24 @@ static int ili9881c_prepare(struct drm_panel *panel)
 	}
 	/* And reset it */
 	if (!IS_ERR(ctx->reset)) {
+		msleep(5);
 		gpiod_set_value(ctx->reset, 1);
-		msleep(20);
-
+		usleep_range(5, 10);
+		/* tREST short than 5us  */
 		gpiod_set_value(ctx->reset, 0);
-		msleep(20);
+		for(i =0; i < 50/*10*/; i++);
+		gpiod_set_value(ctx->reset, 1);
+
+		// for(i =0; i < 5000; i++);
+		usleep_range(5, 10);
+
+		/* tRESW min 10us */
+		gpiod_set_value(ctx->reset, 0);
+		usleep_range(10, 15);
+		gpiod_set_value(ctx->reset, 1);
+
+		/* TRt min 5ms */
+		usleep_range(5000, 10000);
 	}
 
 	return 0;
