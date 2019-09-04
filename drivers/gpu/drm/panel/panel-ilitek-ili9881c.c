@@ -29,6 +29,9 @@ struct ili9881c {
 	struct gpio_desc	*power;
 	struct gpio_desc	*reset;
 	u32	timing_mode;
+
+	bool prepared;
+	bool enabled;
 };
 
 enum ili9881c_op {
@@ -295,6 +298,9 @@ static int ili9881c_prepare(struct drm_panel *panel)
 	struct ili9881c *ctx = panel_to_ili9881c(panel);
 	int i;
 
+	if (ctx->prepared)
+		return 0;
+
 	/* Power the panel */
 	if (!IS_ERR(ctx->power)) {
 		gpiod_set_value(ctx->power, 1);
@@ -321,6 +327,7 @@ static int ili9881c_prepare(struct drm_panel *panel)
 		/* TRt min 5ms */
 		usleep_range(5000, 10000);
 	}
+	ctx->prepared = true;
 
 	return 0;
 }
@@ -330,6 +337,14 @@ static int ili9881c_enable(struct drm_panel *panel)
 	struct ili9881c *ctx = panel_to_ili9881c(panel);
 	unsigned int i;
 	int ret;
+
+	if (ctx->enabled)
+		return 0;
+
+	if (!ctx->prepared) {
+		dev_err(&ctx->dsi->dev, "Panel not prepared!\n");
+		return -EPERM;
+	}
 
 	ctx->dsi->mode_flags |= MIPI_DSI_MODE_LPM;
 
@@ -368,13 +383,31 @@ static int ili9881c_enable(struct drm_panel *panel)
 static int ili9881c_disable(struct drm_panel *panel)
 {
 	struct ili9881c *ctx = panel_to_ili9881c(panel);
+	int ret;
 
-	return mipi_dsi_dcs_set_display_off(ctx->dsi);
+	if (!ctx->enabled)
+		return 0;
+
+	ret = mipi_dsi_dcs_set_display_off(ctx->dsi);
+	if (ret < 0) {
+		dev_err(&ctx->dsi->dev, "Failed to set display off (%d)\n", ret);
+		return ret;
+	}
+
+    ctx->enabled = false;
 }
 
 static int ili9881c_unprepare(struct drm_panel *panel)
 {
 	struct ili9881c *ctx = panel_to_ili9881c(panel);
+
+	if (!ctx->prepared)
+		return 0;
+
+	if (ctx->enabled) {
+		dev_err(&ctx->dsi->dev, "Panel still enabled!\n");
+		return -EPERM;
+	}
 
 	mipi_dsi_dcs_enter_sleep_mode(ctx->dsi);
 	if (!IS_ERR(ctx->power))
@@ -382,6 +415,8 @@ static int ili9881c_unprepare(struct drm_panel *panel)
 
 	if (!IS_ERR(ctx->reset))
 		gpiod_set_value(ctx->reset, 1);
+
+	ctx->prepared = false;
 
 	return 0;
 }
