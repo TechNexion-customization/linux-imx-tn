@@ -77,7 +77,7 @@
 	panel@0 {
 		compatible = "bananapi,lhr050h41", "ilitek,ili9881c";
 		pinctrl-0 = <&pinctrl_mipi_dsi_rst>;
-		reset-gpio = <&gpio3 17 GPIO_ACTIVE_LOW>;
+		reset-gpio = <&gpio3 17 GPIO_ACTIVE_HIGH>;
 
 
 		reg = <0>;
