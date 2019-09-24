@@ -36,3 +36,32 @@
 &hdmi {
 	status = "okay";
 };
+
+#if 0
+// liutest
+&i2c2 {
+	status = "disabled";
+};
+
+&i2c3 {
+	status = "disabled";
+};
+
+/*
+&pwm1
+{
+	status = "disabled";
+};
+*/
+
+&pcie1  {
+	status = "disabled";
+};
+
+/*
+&fec1   {
+	status = "disabled";
+};
+*/
+#endif
+

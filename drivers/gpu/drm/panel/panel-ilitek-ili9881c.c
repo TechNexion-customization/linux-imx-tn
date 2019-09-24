@@ -262,6 +262,9 @@ static struct ili9881c_instr ili9881c_init[] = {
 	ILI9881C_COMMAND_INSTR(0xD3, 0x39),
 
 	ILI9881C_SWITCH_PAGE_INSTR(0),
+
+    //ILI9881C_COMMAND_INSTR(0x35, 0x00),
+    //ILI9881C_COMMAND_INSTR(0x3A, 0x7),
 };
 
 static inline struct ili9881c *panel_to_ili9881c(struct drm_panel *panel)
@@ -350,6 +353,7 @@ static int ili9881c_enable(struct drm_panel *panel)
 
 	for (i = 0; i < ARRAY_SIZE(ili9881c_init); i++) {
 		struct ili9881c_instr *instr = &ili9881c_init[i];
+		printk("start cmd %d\n", i);
 
 		if (instr->op == ILI9881C_SWITCH_PAGE)
 			ret = ili9881c_switch_page(ctx, instr->arg.page);
@@ -357,10 +361,12 @@ static int ili9881c_enable(struct drm_panel *panel)
 			ret = ili9881c_send_cmd_data(ctx, instr->arg.cmd.cmd,
 						      instr->arg.cmd.data);
 
+		printk("end cmd %d\n", i);
 		if (ret)
 			return ret;
 	}
 
+#if 0
 	ret = ili9881c_switch_page(ctx, 0);
 	if (ret)
 		return ret;
@@ -368,7 +374,7 @@ static int ili9881c_enable(struct drm_panel *panel)
 	ret = mipi_dsi_dcs_set_tear_on(ctx->dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
 	if (ret)
 		return ret;
-
+#endif
 	ret = mipi_dsi_dcs_exit_sleep_mode(ctx->dsi);
 	if (ret)
 		return ret;
@@ -376,6 +382,13 @@ static int ili9881c_enable(struct drm_panel *panel)
 	msleep(120);
 
 	mipi_dsi_dcs_set_display_on(ctx->dsi);
+    msleep(20);
+
+    ctx->enabled = true;
+#if 1
+    ctx->dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+
+#endif
 
 	return 0;
 }
@@ -395,6 +408,7 @@ static int ili9881c_disable(struct drm_panel *panel)
 	}
 
     ctx->enabled = false;
+return 0;
 }
 
 static int ili9881c_unprepare(struct drm_panel *panel)
@@ -422,7 +436,8 @@ static int ili9881c_unprepare(struct drm_panel *panel)
 }
 
 static const struct drm_display_mode high_clk_mode = {
-	.clock		= 74250,
+#if 1
+	.clock		= /*74250*/75000,
 	.vrefresh	= 60,
 	.hdisplay	= 720,
 	.hsync_start	= 720 + 13,
@@ -432,6 +447,18 @@ static const struct drm_display_mode high_clk_mode = {
 	.vsync_start	= 1280 + 2,
 	.vsync_end	= 1280 + 2 + 30,
 	.vtotal	= 1280 + 2 + 30 + 20,
+#else
+	.clock		= 75000,
+	.vrefresh	= 60,
+	.hdisplay	= 720,
+	.hsync_start	= 720 + 90,
+	.hsync_end	= 720 + 90 + 33,
+	.htotal	= 720 + 90 + 33 + 100,
+	.vdisplay	= 1280,
+	.vsync_start	= 1280 + 20,
+	.vsync_end	= 1280 + 20 + 40,
+	.vtotal	= 1280 + 20 + 40 + 30,
+#endif
 };
 
 static const struct drm_display_mode default_mode = {

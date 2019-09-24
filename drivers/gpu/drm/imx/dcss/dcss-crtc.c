@@ -308,6 +308,7 @@ static void dcss_crtc_atomic_disable(struct drm_crtc *crtc,
 	pm_runtime_put_sync(dcss_crtc->dev->parent);
 }
 
+#if 0
 static enum drm_mode_status dcss_crtc_mode_valid(struct drm_crtc *crtc,
 		      const struct drm_display_mode *mode)
 {
@@ -340,6 +341,7 @@ static bool dcss_crtc_mode_fixup(struct drm_crtc *crtc,
 
 	return !dcss_dtg_mode_fixup(dcss, clock);
 }
+#endif
 
 static const struct drm_crtc_helper_funcs dcss_helper_funcs = {
 	.atomic_check = dcss_crtc_atomic_check,
@@ -347,8 +349,8 @@ static const struct drm_crtc_helper_funcs dcss_helper_funcs = {
 	.atomic_flush = dcss_crtc_atomic_flush,
 	.atomic_enable = dcss_crtc_atomic_enable,
 	.atomic_disable = dcss_crtc_atomic_disable,
-	.mode_valid = dcss_crtc_mode_valid,
-	.mode_fixup = dcss_crtc_mode_fixup,
+	//.mode_valid = dcss_crtc_mode_valid,
+	//.mode_fixup = dcss_crtc_mode_fixup,
 };
 
 static irqreturn_t dcss_crtc_irq_handler(int irq, void *dev_id)

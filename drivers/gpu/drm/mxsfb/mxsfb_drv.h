@@ -16,7 +16,6 @@
 #ifndef __MXSFB_DRV_H__
 #define __MXSFB_DRV_H__
 
-#define MAX_CLK_SRC 2
 
 struct mxsfb_devdata {
 	unsigned int	 transfer_count;
@@ -30,13 +29,6 @@ struct mxsfb_devdata {
 	unsigned int	 num_formats;
 };
 
-struct mode_config {
-	struct clk *clk_src;
-	unsigned long out_rate;
-	int clock;
-	int mode_clock;
-	struct list_head list;
-};
 
 struct mxsfb_drm_private {
 	struct device			*dev;
@@ -46,8 +38,7 @@ struct mxsfb_drm_private {
 	struct clk			*clk;
 	struct clk			*clk_axi;
 	struct clk			*clk_disp_axi;
-	struct clk			*clk_src[MAX_CLK_SRC];
-	struct clk			*clk_sel, *clk_pll;
+
 
 	struct drm_simple_display_pipe	pipe;
 	struct drm_connector		panel_connector;
@@ -56,7 +47,6 @@ struct mxsfb_drm_private {
 	struct drm_bridge		*bridge;
 	struct drm_fbdev_cma		*fbdev;
 
-	struct list_head		valid_modes;
 };
 
 int mxsfb_setup_crtc(struct drm_device *dev);

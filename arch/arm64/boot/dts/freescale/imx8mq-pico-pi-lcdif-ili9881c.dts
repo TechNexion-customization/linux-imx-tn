@@ -49,6 +49,16 @@
 	status = "okay";
 	max-res = <720>, <1280>;
 
+	/* to fix the clk */
+	assigned-clocks = <&clk IMX8MQ_CLK_LCDIF_PIXEL>,
+			  <&clk IMX8MQ_VIDEO_PLL1_REF_SEL>,
+			  <&clk IMX8MQ_VIDEO_PLL1>;
+	assigned-clock-parents = <&clk IMX8MQ_VIDEO_PLL1_OUT>,
+				 <&clk IMX8MQ_CLK_25M>;
+	assigned-clock-rate = <75000000>,
+			      <0>,
+			      <600000000>;
+
 	port@0 {
 		lcdif_mipi_dsi: mipi-dsi-endpoint {
 			remote-endpoint = <&mipi_dsi_in>;
@@ -64,6 +74,23 @@
 	status = "okay";
 	as_bridge;
 
+
+	// sync-pol = <1>;
+	/* to fix the clk */
+	assigned-clocks = <&clk IMX8MQ_CLK_DSI_PHY_REF>,
+			  <&clk IMX8MQ_CLK_DSI_AHB>,
+			  <&clk IMX8MQ_CLK_DSI_CORE>,
+			  <&clk IMX8MQ_VIDEO_PLL1_REF_SEL>,
+			  <&clk IMX8MQ_VIDEO_PLL1>;
+	assigned-clock-parents = <&clk IMX8MQ_VIDEO_PLL1_OUT>,
+				 <&clk IMX8MQ_SYS1_PLL_80M>,
+				 <&clk IMX8MQ_SYS1_PLL_266M>,
+				 <&clk IMX8MQ_CLK_25M>;
+	assigned-clock-rates = <24000000>,
+			       <80000000>,
+			       <266000000>,
+			       <0>,
+			       <600000000>;
 	port@1 {
 		mipi_dsi_in: endpoint {
 			remote-endpoint = <&lcdif_mipi_dsi>;
@@ -113,7 +140,7 @@
 	};
 };
 
-
+/*
 &i2c3 {
 	polytouch: edt-ft5x06@38 {
 		compatible = "edt,edt-ft5x06";
@@ -127,4 +154,4 @@
 		touchscreen-size-y = <1280>;
 	};
 };
-
+*/
