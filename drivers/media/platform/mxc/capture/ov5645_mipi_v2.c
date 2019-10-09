@@ -1772,7 +1772,7 @@ static s32 ov5645_read_reg(u16 reg, u8 *val);
 static s32 ov5645_write_reg(u16 reg, u8 val);
 
 static const struct i2c_device_id ov5645_id[] = {
-	{"ov5645_mipi", 0},
+	{"ov5645_mipi_v2", 0},
 	{},
 };
 
