@@ -443,6 +443,8 @@ static int imx_drm_platform_probe(struct platform_device *pdev)
 	struct component_match *match = NULL;
 	int ret;
 
+	printk("%s %d\n", __FUNCTION__, __LINE__);
+
 	if (has_dpu(&pdev->dev))
 		add_dpu_bliteng_components(&pdev->dev, &match);
 
@@ -516,7 +518,21 @@ static struct platform_driver imx_drm_pdrv = {
 		.of_match_table = imx_drm_dt_ids,
 	},
 };
-module_platform_driver(imx_drm_pdrv);
+
+
+// module_platform_driver(imx_drm_pdrv);
+static int __init imx_drm_init(void)
+{
+	platform_driver_register(&imx_drm_pdrv);
+}
+/*module_init*/late_initcall(imx_drm_init);
+
+static void __exit imx_drm_exit(void)
+{
+	platform_driver_unregister(&imx_drm_pdrv);
+}
+module_exit(imx_drm_exit);
+
 
 MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
 MODULE_DESCRIPTION("i.MX drm driver core");
