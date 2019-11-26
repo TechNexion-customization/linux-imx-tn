@@ -160,6 +160,15 @@ static const struct drm_mode_config_helper_funcs mxsfb_mode_config_helpers = {
 	.atomic_commit_tail = drm_atomic_helper_commit_tail_rpm,
 };
 
+struct mxsfb_drm_private *t_mxsfb = NULL;
+void mxsfb_crtc_enable_ext(void)
+{	if (t_mxsfb) {
+		printk("liutest mxsfb_crtc_enable_ext\n");
+		usleep_range(10000, 15000);
+		mxsfb_crtc_enable(t_mxsfb);
+	}
+}
+
 static void mxsfb_pipe_enable(struct drm_simple_display_pipe *pipe,
 			      struct drm_crtc_state *crtc_state)
 {
@@ -186,7 +195,8 @@ static void mxsfb_pipe_enable(struct drm_simple_display_pipe *pipe,
 
 	pm_runtime_get_sync(drm->dev);
 	drm_panel_prepare(mxsfb->panel);
-	mxsfb_crtc_enable(mxsfb);
+	// mxsfb_crtc_enable(mxsfb);
+	t_mxsfb = mxsfb;
 	drm_panel_enable(mxsfb->panel);
 }
 
@@ -209,6 +219,8 @@ static void mxsfb_pipe_disable(struct drm_simple_display_pipe *pipe)
 		drm_crtc_send_vblank_event(crtc, event);
 	}
 	spin_unlock_irq(&drm->event_lock);
+
+	t_mxsfb = NULL;
 
 	if (mxsfb->connector != &mxsfb->panel_connector)
 		mxsfb->connector = NULL;

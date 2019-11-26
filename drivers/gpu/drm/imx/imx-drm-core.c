@@ -519,11 +519,10 @@ static struct platform_driver imx_drm_pdrv = {
 	},
 };
 
-
-// module_platform_driver(imx_drm_pdrv);
+//module_platform_driver(imx_drm_pdrv);
 static int __init imx_drm_init(void)
 {
-	platform_driver_register(&imx_drm_pdrv);
+	return platform_driver_register(&imx_drm_pdrv);
 }
 /*module_init*/late_initcall(imx_drm_init);
 
@@ -532,7 +531,6 @@ static void __exit imx_drm_exit(void)
 	platform_driver_unregister(&imx_drm_pdrv);
 }
 module_exit(imx_drm_exit);
-
 
 MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
 MODULE_DESCRIPTION("i.MX drm driver core");

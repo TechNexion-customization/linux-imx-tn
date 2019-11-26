@@ -406,6 +406,7 @@ static int mixel_mipi_phy_power_on(struct phy *phy)
 		(100 - timeout));
 
 	phy_write(phy, PWR_ON, DPHY_PD_DPHY);
+	udelay(10);
 
 	if (priv->plat_data->have_sc)
 		ret = mixel_mipi_phy_enable(phy, 1);
