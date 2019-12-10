@@ -140,7 +140,7 @@
 	};
 };
 
-/*
+
 &i2c3 {
 	polytouch: edt-ft5x06@38 {
 		compatible = "edt,edt-ft5x06";
@@ -154,4 +154,4 @@
 		touchscreen-size-y = <1280>;
 	};
 };
-*/
+
