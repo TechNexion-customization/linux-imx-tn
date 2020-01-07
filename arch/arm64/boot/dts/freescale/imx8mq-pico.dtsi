@@ -587,12 +587,12 @@
 };
 
 &gpu {
-	status = "okay";
+	status = "disabled";
 };
 
 &vpu {
 	regulator-supply = <&buck4_reg>;
-	status = "okay";
+	status = "disabled";
 };
 
 &wdog1 {
