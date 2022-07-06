@@ -44,6 +44,12 @@
 			#size-cells = <0>;
 			status = "okay";
 
+			at24@56 {
+				compatible = "atmel,24c02";
+				pagesize = <8>;
+				reg = <0x56>;
+			};
+
 			fpdlink_dsi2lvds: ds90ub948@0c {
 				compatible = "ti,ds90ub94x";
 				reg = <0x0c>;
