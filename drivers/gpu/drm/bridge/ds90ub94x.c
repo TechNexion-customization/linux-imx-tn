@@ -56,16 +56,38 @@ static void ds90ub94x_display_setting(void)
 	ds90ub94x_write_reg(g_ds90ub94x->ds90ub948_i2c, 0x1E, 0x99); /* GPIO1, MIPI_VDDEN; GPIO2, MIPI_BL_PWM */
 
         /* Configure remote devcie ID in local SER */
+        #if 0
         ds90ub94x_write_reg(g_ds90ub94x->ds90ub941_i2c, 0x7, 0xac); /* SlaveID_0: EEPROM */
         ds90ub94x_write_reg(g_ds90ub94x->ds90ub941_i2c, 0x8, 0xac); /* SlaveAlias_0: EEPROM */
 
 	ds90ub94x_write_reg(g_ds90ub94x->ds90ub948_i2c, 0x8, 0xac); /* SlaveID_0: EEPROM */
 	ds90ub94x_write_reg(g_ds90ub94x->ds90ub948_i2c, 0x10, 0xac); /* SlaveAlias_0: EEPROM */
-	#if 0
+	#endif
+
+        //Reset touch interrupt
+        ds90ub94x_write_reg(g_ds90ub94x->ds90ub948_i2c, 0x34, 0x02);
+        msleep(10);
+        ds90ub94x_write_reg(g_ds90ub94x->ds90ub948_i2c, 0x1f, 0x01);
+        msleep(10);
+        ds90ub94x_write_reg(g_ds90ub94x->ds90ub948_i2c, 0x1f, 0x09);
+        msleep(10);
+#if 0
+        /* exc80w46 */
+        ds90ub94x_write_reg(g_ds90ub94x->ds90ub941_i2c, 0x7, 0x54); /* SlaveID_0: touch panel */
+        ds90ub94x_write_reg(g_ds90ub94x->ds90ub941_i2c, 0x8, 0x54); /* SlaveAlias_0: touch panel */
+        ds90ub94x_write_reg(g_ds90ub94x->ds90ub948_i2c, 0x8, 0x54); /* SlaveID_0: touch panel */
+        ds90ub94x_write_reg(g_ds90ub94x->ds90ub948_i2c, 0x10, 0x54); /* SlaveAlias_0: touch panel */
+
+#endif
+        /* edt-ft5x06 */
+        ds90ub94x_write_reg(g_ds90ub94x->ds90ub941_i2c, 0x7, 0x70); /* SlaveID_0: touch panel */
+        ds90ub94x_write_reg(g_ds90ub94x->ds90ub941_i2c, 0x8, 0x70); /* SlaveAlias_0: touch panel */
+        ds90ub94x_write_reg(g_ds90ub94x->ds90ub948_i2c, 0x8, 0x70); /* SlaveID_0: touch panel */
+        ds90ub94x_write_reg(g_ds90ub94x->ds90ub948_i2c, 0x10, 0x70); /* SlaveAlias_0: touch panel */
+
         /* Configure remote interrupt for touch panel */
 	ds90ub94x_write_reg(g_ds90ub94x->ds90ub941_i2c, 0x30, 0x1); /* REM_INTB_CTRL: port 0 remote interrupt */
 	ds90ub94x_write_reg(g_ds90ub94x->ds90ub948_i2c, 0xC6, 0x21); /* INTB: enable INTB_IN on remote DES */
-	#endif
 }
 
 static int ds90ub94x_probe(struct i2c_client *client, const struct i2c_device_id *id)
