@@ -43,7 +43,7 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 			status = "okay";
-#if 0
+
 			exc80w46: touchscreen@2a {
 				compatible = "eeti,exc80h60";
 				pinctrl-names = "default";
@@ -53,7 +53,7 @@
 				interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
 				status = "okay";
 			};
-#endif
+#if 0
 			polytouch: edt-ft5x06@38 {
                                 compatible = "edt,edt-ft5x06";
                                 pinctrl-names = "default";
@@ -65,7 +65,7 @@
                                 touchscreen-size-x = <800>;
                                 touchscreen-size-y = <480>;
                         };
-
+#endif
 			fpdlink_dsi2lvds: ds90ub948@0c {
 				compatible = "ti,ds90ub94x";
 				reg = <0x0c>;
