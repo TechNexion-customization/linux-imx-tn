@@ -740,6 +740,13 @@ dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk-rpmsg.dtb imx95-19x19-evk-rpmsg-lpv.dt
 imx95-19x19-verdin-rm692c9-dtbs := imx95-19x19-verdin.dtb imx95-19x19-verdin-rm692c9.dtbo
 dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-verdin-rm692c9.dtb
 
+dtb-$(CONFIG_ARCH_MXC) += imx95-edm-wb.dtb
+
+dtb-$(CONFIG_ARCH_MXC) += imx95-edm-wb-lvds-vl10112880.dtb
+dtb-$(CONFIG_ARCH_MXC) += imx95-edm-wb-lvds-vl156192108.dtb
+dtb-$(CONFIG_ARCH_MXC) += imx95-edm-wb-tevs.dtb
+dtb-$(CONFIG_ARCH_MXC) += imx95-edm-wb-tevs-csi1.dtb
+
 dtb-$(CONFIG_ARCH_S32) += s32g274a-evb.dtb
 dtb-$(CONFIG_ARCH_S32) += s32g274a-rdb2.dtb
 dtb-$(CONFIG_ARCH_S32) += s32v234-evb.dtb \
