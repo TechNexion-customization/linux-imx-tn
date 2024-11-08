@@ -107,3 +107,13 @@
 		status = "okay";
 	};
 };
+
+
+&lpi2c5 {
+	status = "okay";
+
+	rtc_ds1337: ds1337@68 {
+		compatible = "dallas,ds1337";
+		reg = <0x68>;
+	};
+};
