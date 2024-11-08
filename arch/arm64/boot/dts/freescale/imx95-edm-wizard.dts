@@ -61,6 +61,15 @@
 			"Mic Jack", "MICB",
 			"AMIC", "MICB";
 	};
+
+	clocks {
+		codec_osc: aud_mclk {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <24000000>;
+			clock-output-names = "wm8960-mclk";
+		};
+	};
 };
 
 /* I2C_B on EDM */
@@ -90,11 +99,10 @@
 	codec: wm8960@1a {
 		compatible = "wlf,wm8960";
 		reg = <0x1a>;
-		clocks = <&scmi_clk IMX95_CLK_SAI3>;
-		//clocks = <&codec_osc>;  /* Clock is from external osc on baseboard */
+		//clocks = <&scmi_clk IMX95_CLK_SAI3>;
+		clocks = <&codec_osc>;  /* Clock is from external osc on baseboard */
 		clock-names = "mclk";
 		wlf,shared-lrclk;
-		wlf,hp-cfg = <2 2 3>;
 		wlf,fixed-mclk;
 		status = "okay";
 	};
