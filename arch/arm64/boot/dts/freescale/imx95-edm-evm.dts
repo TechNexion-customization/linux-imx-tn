@@ -1,0 +1,119 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2024 Technexion Ltd.
+ *
+ * Author: Richard Hu <richard.hu@technexion.com>
+ *
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/phy/phy-imx8-pcie.h>
+#include "imx95-edm.dtsi"
+
+/ {
+	model = "TechNexion EDM-IMX95 and EVM baseboard";
+	compatible = "fsl,imx95-edm", "fsl,imx95";
+
+	reg_lvds_pwr: regulator_lvdspwr {	/* LVDS0_VDDEN */
+		compatible = "regulator-fixed";
+		regulator-name = "lvds0_vdden";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_a21 0 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+	};
+
+	reg_lvds_backlight_pwr: regulator_lvdsblpwr {	/* LVDS0_BL_EN */
+		compatible = "regulator-fixed";
+		regulator-name = "lvds0_bl_en";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_a21 1 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		regulator-always-on;
+	};
+
+	lvds0_backlight: lvds0_backlight {
+		compatible = "gpio-backlight";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_lvds0_backlight>;
+		gpios = <&gpio3 26 GPIO_ACTIVE_HIGH>;
+		default-on;
+		status = "okay";
+	};
+
+	sound-wm8960 {
+		compatible = "fsl,imx-audio-wm8960";
+		model = "wm8960-audio";
+		audio-cpu = <&sai3>;
+		audio-codec = <&codec>;
+		codec-master;
+		audio-routing =
+			"Headphone Jack", "HP_L",
+			"Headphone Jack", "HP_R",
+			"Ext Spk", "SPK_LP",
+			"Ext Spk", "SPK_LN",
+			"Ext Spk", "SPK_RP",
+			"Ext Spk", "SPK_RN",
+			"LINPUT1", "Mic Jack",
+			"RINPUT1", "Mic Jack",
+			"Mic Jack", "MICB",
+			"AMIC", "MICB";
+	};
+
+	clocks {
+		codec_osc: aud_mclk {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <24000000>;
+			clock-output-names = "wm8960-mclk";
+		};
+	};
+};
+
+/* I2C_B on EDM */
+&lpi2c5 {
+	status = "okay";
+
+	pca9555_a21: pca9555@21 {
+		compatible = "nxp,pca9555";
+		reg = <0x21>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		status = "okay";
+		gpio-line-names = "EXPOSURE_TRIG_IN1", "FLASH_OUT1", "INFO_TRIG_IN1", "CAM_SHUTTER1", "XVS1", "PWR1_TIME0", "PWR1_TIME1", "PWR1_TIME2",
+				"EXPOSURE_TRIG_IN2", "FLASH_OUT2", "INFO_TRIG_IN2", "CAM_SHUTTER2", "XVS2", "PWR2_TIME0", "PWR2_TIME1", "PWR2_TIME2";
+	};
+
+	pca9555_a23: pca9555@23 {
+		compatible = "nxp,pca9555";
+		reg = <0x23>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		status = "okay";
+		gpio-line-names = "M2_DISABLE_N", "LED_EN", "", "", "", "", "", "USB_OTG_OC",
+				"EXT_GPIO8", "EXT_GPIO9", "", "", "", "CSI1_PDB", "CSI2_PDB", "PD_FAULT";
+	};
+
+	codec: wm8960@1a {
+		compatible = "wlf,wm8960";
+		reg = <0x1a>;
+		//clocks = <&scmi_clk IMX95_CLK_SAI3>;
+		clocks = <&codec_osc>;  /* Clock is from external osc on baseboard */
+		clock-names = "mclk";
+		wlf,shared-lrclk;
+		wlf,fixed-mclk;
+		status = "okay";
+	};
+};
+
+
+&lpi2c5 {
+	status = "okay";
+
+	rtc_ds1337: ds1337@68 {
+		compatible = "dallas,ds1337";
+		reg = <0x68>;
+	};
+};
