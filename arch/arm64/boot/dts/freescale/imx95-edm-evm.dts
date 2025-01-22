@@ -43,6 +43,34 @@
 		status = "okay";
 	};
 
+	usb_hub_rst: usb_hub_rst {
+		compatible = "gpio-reset";
+		reset-gpios = <&tca9555_c21 11 GPIO_ACTIVE_LOW>;
+		reset-delay-us = <10>;
+		#reset-cells = <0>;
+	};
+
+//Richard: Test
+/*
+	reg_usb_hub_rst: regulator_usb_hub_rst {
+		compatible = "regulator-fixed";
+		regulator-name = "usb_hub_rst";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_c21 11 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		regulator-always-on;
+	};
+*/
+	reg_usb_otg_vbus: usb_otg_vbus {
+		compatible = "regulator-fixed";
+		regulator-name = "usb_otg_vbus";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_a22 0 GPIO_ACTIVE_LOW>;
+		enable-active-low;
+	};
+
 	sound-wm8960 {
 		compatible = "fsl,imx-audio-wm8960";
 		model = "wm8960-audio";
@@ -69,6 +97,109 @@
 			clock-frequency = <24000000>;
 			clock-output-names = "wm8960-mclk";
 		};
+	};
+};
+
+&usb2 {
+	dr_mode = "otg";
+	status = "okay";
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			otg1_out_ep: endpoint {
+				remote-endpoint = <&hd3ss3220_in_ep>;
+			};
+		};
+
+		port@1 {
+			reg = <1>;
+			otg1_in_ep: endpoint {
+				remote-endpoint = <&hd3ss3220_out_ep>;
+			};
+		};
+	};
+};
+
+&usb3_dwc3 {
+	dr_mode = "host";
+	reset = <&usb_hub_rst>;
+	status = "okay";	
+};
+
+/* I2C_CSI on EDM */
+&lpi2c2 {
+	status = "okay";
+
+	tca9554_csi25: tca9554csi25@25 {
+		compatible = "nxp,pca9554";
+		reg = <0x25>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		status = "okay";
+		gpio-line-names = "EXPOSURE_TRIG_IN1", "FLASH_OUT1", "INFO_TRIG_IN1", "CAM_SHUTTER1", "PWR1_TIME0", "PWR1_TIME1", "PWR1_TIME2", "";
+	};
+
+	typec_hd3ss3220: hd3ss3220@47 {
+		compatible = "ti,hd3ss3220";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_hd3ss3220_irq>;
+		interrupts-extended = <&gpio2 7 IRQ_TYPE_LEVEL_LOW>;
+		vbus-supply = <&reg_usb_otg_vbus>;
+		reg = <0x47>;
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+				hd3ss3220_in_ep: endpoint {
+					remote-endpoint = <&otg1_out_ep>;
+				};
+			};
+
+			port@1 {
+				reg = <1>;
+				hd3ss3220_out_ep: endpoint {
+					remote-endpoint = <&otg1_in_ep>;
+				};
+			};
+		};
+	};
+};
+
+/* I2C_C on EDM */
+&lpi2c3 {
+	tca9555_c21: tca9555c21@21 {
+		compatible = "nxp,pca9555";
+		reg = <0x21>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		status = "okay";
+	};
+
+	pca9685_pwm:pca9685@55 {
+		compatible = "nxp,pca9685-pwm";
+		#pwm-cells = <2>;
+		reg = <0x55>;
+	};
+};
+
+/* I2C_D on EDM */
+&lpi2c4 {
+	status = "okay";
+
+	tca9554_d25: tca9554d25@25 {
+		compatible = "nxp,pca9554";
+		reg = <0x25>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		status = "okay";
+		gpio-line-names = "EXPOSURE_TRIG_IN2", "FLASH_OUT2", "INFO_TRIG_IN2", "CAM_SHUTTER2", "PWR2_TIME0", "PWR2_TIME1", "PWR2_TIME2", "";
 	};
 };
 
@@ -115,5 +246,13 @@
 	rtc_ds1337: ds1337@68 {
 		compatible = "dallas,ds1337";
 		reg = <0x68>;
+	};
+};
+
+&scmi_iomuxc {
+	pinctrl_hd3ss3220_irq: hd3ss3220_irqgrp {
+		fsl,pins = <
+			IMX95_PAD_GPIO_IO07__GPIO2_IO_BIT7			0x91e /* GPIO_IO1 */
+		>;
 	};
 };

@@ -186,14 +186,14 @@
 		regulator-max-microvolt = <1800000>;
 	};
 
-	reg_usb_vbus: regulator-vbus {
+	reg_usb_otg_vbus: usb_otg_vbus {
+		pinctrl-names = "default";
 		compatible = "regulator-fixed";
-		regulator-name = "USB_VBUS";
-		regulator-min-microvolt = <5000000>;
-		regulator-max-microvolt = <5000000>;
-		//gpio = <&i2c7_pcal6524 3 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-		regulator-always-on;
+		regulator-name = "usb_otg_vbus";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_a22 0 GPIO_ACTIVE_LOW>;
+		enable-active-low;
 	};
 
 	usdhc3_pwrseq: usdhc3_pwrseq {
@@ -458,7 +458,7 @@
 	pinctrl-1 = <&pinctrl_lpi2c6>;
 	status = "okay";
 
-	tca9555_a21: tca9555@21 {
+	tca9555_a21: tca9555a21@21 {
 		compatible = "nxp,pca9555";
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_tca9555_a21_irq>;
@@ -480,7 +480,7 @@
 		};
 	};
 
-	tca9555_a22: tca9555@22 {
+	tca9555_a22: tca9555a22@22 {
 		compatible = "nxp,pca9555";
 		reg = <0x22>;
 		vcc-supply = <&reg_3p3v>;
@@ -614,9 +614,13 @@
 };
 
 &usb2 {
-	dr_mode = "host";
-	//vbus-supply = <&reg_usb_vbus>;
-	disable-over-current;
+	dr_mode = "otg";
+	hnp-disable;
+	srp-disable;
+	adp-disable;
+	usb-role-switch;
+	picophy,pre-emp-curr-control = <3>;
+	picophy,dc-vol-level-adjust = <7>;
 	status = "okay";
 };
 
@@ -740,14 +744,8 @@
 };
 
 &usb3_dwc3 {
-	dr_mode = "otg";
-	hnp-disable;
-	srp-disable;
-	adp-disable;
-	usb-role-switch;
-	role-switch-default-mode = "none";
-	snps,dis-u1-entry-quirk;
-	snps,dis-u2-entry-quirk;
+	dr_mode = "host";
+	//disable-over-current;
 	status = "okay";
 };
 
