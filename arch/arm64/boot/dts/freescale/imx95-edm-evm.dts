@@ -50,18 +50,6 @@
 		#reset-cells = <0>;
 	};
 
-//Richard: Test
-/*
-	reg_usb_hub_rst: regulator_usb_hub_rst {
-		compatible = "regulator-fixed";
-		regulator-name = "usb_hub_rst";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		gpio = <&tca9555_c21 11 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-		regulator-always-on;
-	};
-*/
 	reg_usb_otg_vbus: usb_otg_vbus {
 		compatible = "regulator-fixed";
 		regulator-name = "usb_otg_vbus";
@@ -71,6 +59,40 @@
 		enable-active-low;
 	};
 
+	tlv320_mclk: clk-0 {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <12000000>;
+	};
+
+	sound {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "tlv320aic3x-audio";
+		simple-audio-card,widgets =
+			"Headphone", "Headphone Jack",
+			"Microphone", "Mic Jack";
+		simple-audio-card,routing =
+			"Headphone Jack", "HPLOUT",
+			"Headphone Jack", "HPROUT",
+			"MIC2R", "Mic Jack",
+			"Mic Jack", "Mic Bias";
+		simple-audio-card,format = "dsp_b";
+		simple-audio-card,bitclock-master = <&sound_master>;
+		simple-audio-card,frame-master = <&sound_master>;
+		simple-audio-card,bitclock-inversion;
+		status = "okay";
+
+		simple-audio-card,cpu {
+			sound-dai = <&sai3>;
+		};
+
+		sound_master: simple-audio-card,codec {
+			sound-dai = <&tlv320aic3104>;
+			clocks = <&tlv320_mclk>;
+		};
+	};
+
+/*
 	sound-wm8960 {
 		compatible = "fsl,imx-audio-wm8960";
 		model = "wm8960-audio";
@@ -98,6 +120,7 @@
 			clock-output-names = "wm8960-mclk";
 		};
 	};
+*/
 };
 
 &usb2 {
@@ -170,6 +193,11 @@
 			};
 		};
 	};
+
+	rtc_ds1337: ds1337@68 {
+		compatible = "dallas,ds1337";
+		reg = <0x68>;
+	};
 };
 
 /* I2C_C on EDM */
@@ -193,6 +221,15 @@
 &lpi2c4 {
 	status = "okay";
 
+	pca9554_d23: tca9554d23@23 {
+		compatible = "nxp,pca9554";
+		reg = <0x23>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		status = "okay";
+		gpio-line-names = "DSI1_VDDEN", "DSI1_BL_EN", "DSI1_TE", "DSI1_RST", "DSI1_INT_N", "TOUCH_RST", "EEPROM_WP", "";
+	};
+
 	tca9554_d25: tca9554d25@25 {
 		compatible = "nxp,pca9554";
 		reg = <0x25>;
@@ -207,45 +244,47 @@
 &lpi2c5 {
 	status = "okay";
 
-	pca9555_a21: pca9555@21 {
-		compatible = "nxp,pca9555";
-		reg = <0x21>;
-		gpio-controller;
-		#gpio-cells = <2>;
-		status = "okay";
-		gpio-line-names = "EXPOSURE_TRIG_IN1", "FLASH_OUT1", "INFO_TRIG_IN1", "CAM_SHUTTER1", "XVS1", "PWR1_TIME0", "PWR1_TIME1", "PWR1_TIME2",
-				"EXPOSURE_TRIG_IN2", "FLASH_OUT2", "INFO_TRIG_IN2", "CAM_SHUTTER2", "XVS2", "PWR2_TIME0", "PWR2_TIME1", "PWR2_TIME2";
+	tlv320aic3104: tlv320aic3104@1b {
+		#sound-dai-cells = <0>;
+		compatible = "ti,tlv320aic3104"; /* ti,tlv320aic3x */
+		reg = <0x1b>;
+		//pinctrl-names = "default";
+		//pinctrl-0 = <&main_aud_rst_pins_default>;
+		//reset-gpios = <&main_gpio1 28 GPIO_ACTIVE_LOW>;
+		ai3x-ocmv = <0>;
+		ai3x-micbias-vg = <1>;		/* 2.0V */
+
+		/* Regulators */
+		AVDD-supply = <&reg_3p3v>;
+		IOVDD-supply = <&reg_3p3v>;
+		DRVDD-supply = <&reg_3p3v>;
+		DVDD-supply = <&reg_1p8v>;
 	};
 
-	pca9555_a23: pca9555@23 {
-		compatible = "nxp,pca9555";
-		reg = <0x23>;
-		gpio-controller;
-		#gpio-cells = <2>;
-		status = "okay";
-		gpio-line-names = "M2_DISABLE_N", "LED_EN", "", "", "", "", "", "USB_OTG_OC",
-				"EXT_GPIO8", "EXT_GPIO9", "", "", "", "CSI1_PDB", "CSI2_PDB", "PD_FAULT";
-	};
-
-	codec: wm8960@1a {
-		compatible = "wlf,wm8960";
-		reg = <0x1a>;
-		//clocks = <&scmi_clk IMX95_CLK_SAI3>;
-		clocks = <&codec_osc>;  /* Clock is from external osc on baseboard */
-		clock-names = "mclk";
-		wlf,shared-lrclk;
-		wlf,fixed-mclk;
+	eeprom_baseboard: eeprom@51 {
+		compatible = "atmel,24c512";
+		reg = <0x51>;
+		pagesize = <128>;
 		status = "okay";
 	};
 };
 
 
-&lpi2c5 {
+&lpi2c6 {
 	status = "okay";
 
-	rtc_ds1337: ds1337@68 {
-		compatible = "dallas,ds1337";
-		reg = <0x68>;
+	/* Power monitor for VCC_12V_OUT */
+	sensor_12v:ina219_12v@40 {
+		compatible = "ti,ina219";
+		reg = <0x40>;
+		shunt-resistor = <2000>; /* .002 Ohm resistor = 2000 uOhms*/
+	};
+
+	/* Power monitor for VIN_5V0 */
+	sensor_5v:ina219_5v@45 {
+		compatible = "ti,ina219";
+		reg = <0x45>;
+		shunt-resistor = <2000>; /* .002 Ohm resistor = 2000 uOhms*/
 	};
 };
 
