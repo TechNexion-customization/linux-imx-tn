@@ -160,6 +160,7 @@
 	tca9554_csi25: tca9554csi25@25 {
 		compatible = "nxp,pca9554";
 		reg = <0x25>;
+		vcc-supply = <&reg_1p8v>;
 		gpio-controller;
 		#gpio-cells = <2>;
 		status = "okay";
@@ -204,9 +205,16 @@
 &lpi2c3 {
 	tca9555_c21: tca9555c21@21 {
 		compatible = "nxp,pca9555";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_tca9555_c21_irq>;
 		reg = <0x21>;
+		vcc-supply = <&reg_3p3v>;
 		gpio-controller;
 		#gpio-cells = <2>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupt-parent = <&gpio4>;
+		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
 		status = "okay";
 	};
 
@@ -224,6 +232,7 @@
 	pca9554_d23: tca9554d23@23 {
 		compatible = "nxp,pca9554";
 		reg = <0x23>;
+		vcc-supply = <&reg_3p3v>;
 		gpio-controller;
 		#gpio-cells = <2>;
 		status = "okay";
@@ -233,6 +242,7 @@
 	tca9554_d25: tca9554d25@25 {
 		compatible = "nxp,pca9554";
 		reg = <0x25>;
+		vcc-supply = <&reg_1p8v>;
 		gpio-controller;
 		#gpio-cells = <2>;
 		status = "okay";
@@ -292,6 +302,12 @@
 	pinctrl_hd3ss3220_irq: hd3ss3220_irqgrp {
 		fsl,pins = <
 			IMX95_PAD_GPIO_IO07__GPIO2_IO_BIT7			0x91e /* GPIO_IO1 */
+		>;
+	};
+
+	pinctrl_tca9555_c21_irq: tca9555_c21_irqgrp {
+		fsl,pins = <
+			IMX95_PAD_CCM_CLKO4__GPIO4_IO_BIT29			0x31e /* GPIO_IO4 */
 		>;
 	};
 };
