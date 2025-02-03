@@ -14,11 +14,6 @@
 #include "imx95.dtsi"
 
 / {
-	aliases {
-		ethernet0 = &enetc_port0;
-		ethernet1 = &enetc_port2;
-	};
-
 	chosen {
 		stdout-path = &lpuart1;
 		#address-cells = <2>;
@@ -568,7 +563,7 @@
 	status = "okay";
 };
 
-&enetc_port1 {
+&enetc_port1 {	/* RTL8211F on SOM */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_enetc1>;
 	phy-handle = <&ethphy1>;
@@ -601,8 +596,8 @@
 	pinctrl-0 = <&pinctrl_emdio>;
 	status = "okay";
 
-	ethphy1: ethernet-phy@1 {
-		compatible = "ethernet-phy-ieee802.3-c22";
+	ethphy1: ethernet-phy@1 { /* RTL8211F on SOM */
+			compatible = "ethernet-phy-ieee802.3-c22";
 			reg = <1>;
 			reset-gpios = <&gpio5 17 GPIO_ACTIVE_LOW>;
 			reset-assert-us = <35000>;
@@ -858,6 +853,24 @@
 		>;
 	};
 
+	pinctrl_enetc0: enetc0grp {
+		fsl,pins = <
+			IMX95_PAD_ENET1_TD3__NETCMIX_TOP_ETH0_RGMII_TD3		0x57e
+			IMX95_PAD_ENET1_TD2__NETCMIX_TOP_ETH0_RGMII_TD2		0x57e
+			IMX95_PAD_ENET1_TD1__NETCMIX_TOP_ETH0_RGMII_TD1		0x57e
+			IMX95_PAD_ENET1_TD0__NETCMIX_TOP_ETH0_RGMII_TD0		0x57e
+			IMX95_PAD_ENET1_TX_CTL__NETCMIX_TOP_ETH0_RGMII_TX_CTL	0x57e
+			IMX95_PAD_ENET1_TXC__NETCMIX_TOP_ETH0_RGMII_TX_CLK	0x58e
+			IMX95_PAD_ENET1_RX_CTL__NETCMIX_TOP_ETH0_RGMII_RX_CTL	0x57e
+			IMX95_PAD_ENET1_RXC__NETCMIX_TOP_ETH0_RGMII_RX_CLK	0x58e
+			IMX95_PAD_ENET1_RD0__NETCMIX_TOP_ETH0_RGMII_RD0		0x57e
+			IMX95_PAD_ENET1_RD1__NETCMIX_TOP_ETH0_RGMII_RD1		0x57e
+			IMX95_PAD_ENET1_RD2__NETCMIX_TOP_ETH0_RGMII_RD2		0x57e
+			IMX95_PAD_ENET1_RD3__NETCMIX_TOP_ETH0_RGMII_RD3		0x57e
+			IMX95_PAD_GPIO_IO13__GPIO2_IO_BIT13			0x9fe
+		>;
+	};
+
 	pinctrl_enetc1: enetc1grp {
 		fsl,pins = <
 			IMX95_PAD_ENET2_TD3__NETCMIX_TOP_ETH1_RGMII_TD3		0x57e
@@ -872,7 +885,7 @@
 			IMX95_PAD_ENET2_RD1__NETCMIX_TOP_ETH1_RGMII_RD1		0x57e
 			IMX95_PAD_ENET2_RD2__NETCMIX_TOP_ETH1_RGMII_RD2		0x57e
 			IMX95_PAD_ENET2_RD3__NETCMIX_TOP_ETH1_RGMII_RD3		0x57e
-			IMX95_PAD_GPIO_IO37__GPIO5_IO_BIT17					0x9fe
+			IMX95_PAD_GPIO_IO37__GPIO5_IO_BIT17			0x9fe
 		>;
 	};
 
@@ -880,6 +893,13 @@
 		fsl,pins = <
 			IMX95_PAD_ENET2_MDC__NETCMIX_TOP_NETC_MDC		0x57e
 			IMX95_PAD_ENET2_MDIO__NETCMIX_TOP_NETC_MDIO		0x97e
+		>;
+	};
+
+	pinctrl_mdio_gpio: mdiogpiogrp {
+		fsl,pins = <
+			IMX95_PAD_ENET1_MDC__GPIO4_IO_BIT0		0x57e
+			IMX95_PAD_ENET1_MDIO__GPIO4_IO_BIT1		0x97e
 		>;
 	};
 

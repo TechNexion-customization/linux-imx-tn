@@ -15,6 +15,11 @@
 	model = "TechNexion EDM-IMX95 and EVM baseboard";
 	compatible = "fsl,imx95-edm", "fsl,imx95";
 
+	aliases {
+		ethernet0 = &enetc_port1;
+		ethernet1 = &enetc_port2;
+	};
+
 	reg_lvds_pwr: regulator_lvdspwr {	/* LVDS0_VDDEN */
 		compatible = "regulator-fixed";
 		regulator-name = "lvds0_vdden";
@@ -92,6 +97,28 @@
 		};
 	};
 
+	mdio_gpio: mdio-gpio {
+		compatible = "virtual,mdio-gpio";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_mdio_gpio>;
+		gpios = <&gpio4 0 GPIO_ACTIVE_HIGH>, /* mdc */
+			<&gpio4 1 GPIO_ACTIVE_HIGH>; /* mdio */
+		status = "okay";
+
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		ethphy2: ethernet-phy2@1 { /* RTL8211F on baseboard */
+			compatible = "ethernet-phy-ieee802.3-c22";
+			reg = <1>;
+			reset-gpios = <&gpio2 13 GPIO_ACTIVE_LOW>;
+			reset-assert-us = <35000>;
+			reset-deassert-us = <75000>;
+			eee-broken-1000t;
+			realtek,aldps-disable;
+			realtek,clkout-disable;
+		};
+	};
 /*
 	sound-wm8960 {
 		compatible = "fsl,imx-audio-wm8960";
@@ -296,6 +323,14 @@
 		reg = <0x45>;
 		shunt-resistor = <2000>; /* .002 Ohm resistor = 2000 uOhms*/
 	};
+};
+
+&enetc_port0 {	/* RTL8211F on baseboard */
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_enetc0>;
+	phy-handle = <&ethphy2>;
+	phy-mode = "rgmii-id";
+	status = "okay";
 };
 
 &scmi_iomuxc {
