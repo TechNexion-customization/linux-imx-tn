@@ -1125,13 +1125,12 @@
 &pcie0 {
 	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
 	reset-gpio = <&tca9555_a21 10 GPIO_ACTIVE_LOW>;
-	status = "okay";
+	status = "disabled";
 };
 
 &pcie1 {
 	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
-	//reset-gpio = <&i2c7_pcal6524 16 GPIO_ACTIVE_LOW>;
-	vpcie-supply = <&reg_slot_pwr>;
+	reset-gpio = <&tca9555_a21 13 GPIO_ACTIVE_LOW>;
 	status = "disabled";
 };
 

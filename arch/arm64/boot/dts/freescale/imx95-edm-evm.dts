@@ -64,6 +64,34 @@
 		enable-active-low;
 	};
 
+	reg_pcie0_pwr: regulator-pcie0-pwr {	/* PCIE1 M.2 B key */
+		compatible = "regulator-fixed";
+		regulator-name = "PCIe slot-power";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_c21 2 GPIO_ACTIVE_HIGH>;	/* M2_B_PWR_EN */
+		enable-active-high;
+	};
+
+	reg_pcie1_pwr: regulator-pcie1-pwr {	/* PCIE2 M.2 M key_1 */
+		compatible = "regulator-fixed";
+		regulator-name = "PCIe slot-power";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_c21 4 GPIO_ACTIVE_HIGH>;	/* M2_M1_PWR_EN */
+		enable-active-high;
+	};
+
+	reg_serdes_eth_phy_pwr: regulator-pcie1-pwr {	/* PCIE2 M.2 M key_2 */
+		compatible = "regulator-fixed";
+		regulator-name = "SERDES ETH PHY PWR";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_c21 5 GPIO_ACTIVE_HIGH>;	/*	M2_M2_PWR_EN */
+		enable-active-high;
+		regulator-always-on;
+	};
+
 	tlv320_mclk: clk-0 {
 		#clock-cells = <0>;
 		compatible = "fixed-clock";
@@ -148,6 +176,16 @@
 		};
 	};
 */
+};
+
+&pcie0 { /* PCIE1 M.2 B key */
+	vpcie-supply = <&reg_pcie0_pwr>;
+	status = "okay";
+};
+
+&pcie1 { /* PCIE2 M.2 M key_1 */
+	vpcie-supply = <&reg_pcie1_pwr>;
+	status = "okay";
 };
 
 &usb2 {
