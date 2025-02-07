@@ -18,6 +18,8 @@
 	aliases {
 		ethernet0 = &enetc_port1;
 		ethernet1 = &enetc_port2;
+		rtc0 = &rtc_ds1337;
+		rtc1 = &scmi_bbm;
 	};
 
 	reg_lvds_pwr: regulator_lvdspwr {	/* LVDS0_VDDEN */
