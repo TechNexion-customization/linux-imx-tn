@@ -105,10 +105,13 @@
 		simple-audio-card,name = "tlv320aic3x-audio";
 		simple-audio-card,widgets =
 			"Headphone", "Headphone Jack",
-			"Microphone", "Mic Jack";
+			"Microphone", "Mic Jack",
+			"Line", "Line Out";
 		simple-audio-card,routing =
 			"Headphone Jack", "HPLOUT",
 			"Headphone Jack", "HPROUT",
+			"Line Out", "HPLCOM",
+			"Line Out", "HPRCOM",
 			"MIC2R", "Mic Jack",
 			"Mic Jack", "Mic Bias";
 		simple-audio-card,format = "dsp_b";
@@ -127,6 +130,33 @@
 		};
 	};
 
+/*
+	sound {
+		compatible = "fsl,imx-audio-tlv320aic31xx";
+		model = "tlv320aic3x-audio";
+		audio-cpu = <&sai3>;
+		audio-codec = <&tlv320aic3104>;
+		audio-routing =
+			"Headphone Jack", "HPL",
+			"Headphone Jack", "HPR",
+			"Ext Spk", "SPK",
+			"MIC1LP", "Mic Jack",
+			"MIC1RP", "Mic Jack",
+			"MIC1LP", "MICBIAS",
+			"MIC1RP", "MICBIAS",
+			"Mic Jack", "MICBIAS";
+		headset-det;
+	};
+
+	clocks {
+		codec_osc: aud_mclk {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <12000000>;
+			clock-output-names = "codec-mclk";
+		};
+	};
+*/
 	mdio_gpio: mdio-gpio {
 		compatible = "virtual,mdio-gpio";
 		pinctrl-names = "default";
@@ -282,6 +312,8 @@
 		#interrupt-cells = <2>;
 		interrupt-parent = <&gpio4>;
 		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+		gpio-line-names = "M2_B_WWAN_WAKEN", "M2_B_WAN_DISABLEN", "M2_B_PWR_EN", "M2_B_RESET", "M2_M1_PWR_EN", "M2_M2_PWR_EN", "FAN_STBY", "USB_OTG_OC",
+						  "RTC_INTA", "CAN1_STB", "CAN2_STB", "USB_HUB_RESET", "CSI1_PDB", "CSI2_PDB", "VCONN_FAULT", "AUD_RST";
 		status = "okay";
 	};
 
@@ -320,14 +352,11 @@
 /* I2C_B on EDM */
 &lpi2c5 {
 	status = "okay";
-
-	tlv320aic3104: tlv320aic3104@1b {
+	tlv320aic3104: tlv320aic3104@18 {
 		#sound-dai-cells = <0>;
 		compatible = "ti,tlv320aic3104"; /* ti,tlv320aic3x */
-		reg = <0x1b>;
-		//pinctrl-names = "default";
-		//pinctrl-0 = <&main_aud_rst_pins_default>;
-		//reset-gpios = <&main_gpio1 28 GPIO_ACTIVE_LOW>;
+		reg = <0x18>;
+		reset-gpios = <&tca9555_c21 15 GPIO_ACTIVE_LOW>;
 		ai3x-ocmv = <0>;
 		ai3x-micbias-vg = <1>;		/* 2.0V */
 
