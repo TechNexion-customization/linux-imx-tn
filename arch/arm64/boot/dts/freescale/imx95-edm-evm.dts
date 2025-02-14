@@ -414,4 +414,10 @@
 			IMX95_PAD_CCM_CLKO4__GPIO4_IO_BIT29			0x31e /* GPIO_IO4 */
 		>;
 	};
+
+	pinctrl_touch_irq: touch_irqgrp {
+		fsl,pins = <
+			IMX95_PAD_GPIO_IO17__GPIO2_IO_BIT17			0x31e   /* Touch INT */
+		>;
+	};
 };

@@ -120,3 +120,16 @@
 		status = "okay";
 	};
 };
+
+/* I2C_C on EDM */
+&lpi2c3 {
+	exc80w46: touchscreen@2a {
+	        compatible = "eeti,exc80h60";
+	        pinctrl-names = "default";
+	        pinctrl-0 = <&pinctrl_touch_irq>;
+	        reg = <0x2a>;
+	        interrupt-parent = <&gpio2>;
+	        interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
+	        status = "okay";
+	};
+};
