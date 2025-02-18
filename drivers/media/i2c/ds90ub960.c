@@ -3977,10 +3977,10 @@ static int ub960_enable_core_hw(struct ub960_data *priv)
 	}
 
 	if (priv->pd_gpio) {
-		gpiod_set_value_cansleep(priv->pd_gpio, 1);
+		gpiod_set_value_cansleep(priv->pd_gpio, 0);
 		/* wait min 2 ms for reset to complete */
 		fsleep(2000);
-		gpiod_set_value_cansleep(priv->pd_gpio, 0);
+		gpiod_set_value_cansleep(priv->pd_gpio, 1);
 		/* wait min 2 ms for power up to finish */
 		fsleep(2000);
 	}
@@ -4026,7 +4026,7 @@ static int ub960_enable_core_hw(struct ub960_data *priv)
 	return 0;
 
 err_pd_gpio:
-	gpiod_set_value_cansleep(priv->pd_gpio, 1);
+	gpiod_set_value_cansleep(priv->pd_gpio, 0);
 	clk_disable_unprepare(priv->refclk);
 err_disable_vddio:
 	regulator_disable(priv->vddio);
@@ -4036,7 +4036,7 @@ err_disable_vddio:
 
 static void ub960_disable_core_hw(struct ub960_data *priv)
 {
-	gpiod_set_value_cansleep(priv->pd_gpio, 1);
+	gpiod_set_value_cansleep(priv->pd_gpio, 0);
 	clk_disable_unprepare(priv->refclk);
 	regulator_disable(priv->vddio);
 }
