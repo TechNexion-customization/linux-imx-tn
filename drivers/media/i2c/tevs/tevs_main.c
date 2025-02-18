@@ -15,6 +15,8 @@
 #include <media/v4l2-event.h>
 #include <media/v4l2-fwnode.h>
 #include <media/v4l2-subdev.h>
+#include <media/mipi-csi2.h>
+
 #include "tevs_tbls.h"
 
 /* Define host command register of TEVS information page */
@@ -502,6 +504,7 @@ static int tevs_standby(struct tevs *tevs, int enable)
 	if (enable == 1) {
 		tevs_i2c_write_16b(tevs, HOST_COMMAND_ISP_CTRL_SYSTEM_START,
 				   0x0000);
+		usleep_range(9000, 10000);
 		while (timeout < 100) {
 			tevs_i2c_read_16b(
 				tevs, HOST_COMMAND_ISP_CTRL_SYSTEM_START, &v);
@@ -518,6 +521,7 @@ static int tevs_standby(struct tevs *tevs, int enable)
 	} else {
 		tevs_i2c_write_16b(tevs, HOST_COMMAND_ISP_CTRL_SYSTEM_START,
 				   0x0001);
+		usleep_range(9000, 10000);
 		while (timeout < 100) {
 			tevs_i2c_read_16b(
 				tevs, HOST_COMMAND_ISP_CTRL_SYSTEM_START, &v);
@@ -722,6 +726,24 @@ static int tevs_set_stream(struct v4l2_subdev *sub_dev, int enable)
 	mutex_unlock(&tevs->lock);
 
 	return ret;
+}
+
+static int tevs_get_frame_desc(struct v4l2_subdev *sub_dev, unsigned int pad,
+                                struct v4l2_mbus_frame_desc *fd)
+{
+	if (pad != 0 || !fd)
+		return -EINVAL;
+
+	memset(fd, 0x0, sizeof(*fd));
+
+	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
+	fd->entry[0].flags = 0;
+	fd->entry[0].pixelcode = MEDIA_BUS_FMT_UYVY8_1X16;
+	fd->entry[0].bus.csi2.vc = 0;
+	fd->entry[0].bus.csi2.dt = MIPI_CSI2_DT_YUV422_8B;
+	fd->num_entries = 1;
+
+	return 0;
 }
 
 static int tevs_enum_mbus_code(struct v4l2_subdev *sub_dev,
@@ -1851,6 +1873,7 @@ static const struct v4l2_subdev_pad_ops tevs_v4l2_subdev_pad_ops = {
 	.get_selection = tevs_get_selection,
 	.enum_frame_size = tevs_enum_frame_size,
 	.enum_frame_interval = tevs_enum_frame_interval,
+	.get_frame_desc	= tevs_get_frame_desc,
 };
 
 static const struct v4l2_subdev_ops tevs_subdev_ops = {
