@@ -26,6 +26,8 @@
 		};
 	};
 
+	/delete-node/ sound;
+
 	sound-adv7535 {
 		compatible = "simple-audio-card";
 		simple-audio-card,name = "adv7535-hdmi";
@@ -135,5 +137,12 @@
 	channel@0 {
 		reg = <0>;
 		status = "okay";
+	};
+};
+
+/* I2C_B on EDM */
+&lpi2c5 {
+	tlv320aic3104: tlv320aic3104@18 {
+		status = "disabled";
 	};
 };
