@@ -29,25 +29,16 @@
 		regulator-max-microvolt = <3300000>;
 		gpio = <&tca9555_a21 0 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
-	};
-
-	reg_lvds_backlight_pwr: regulator_lvdsblpwr {	/* LVDS0_BL_EN */
-		compatible = "regulator-fixed";
-		regulator-name = "lvds0_bl_en";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		gpio = <&tca9555_a21 1 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-		regulator-always-on;
+		status = "disabled";
 	};
 
 	lvds0_backlight: lvds0_backlight {
-		compatible = "gpio-backlight";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_lvds0_backlight>;
-		gpios = <&gpio3 26 GPIO_ACTIVE_HIGH>;
-		default-on;
-		status = "okay";
+		compatible = "pwm-backlight";
+		pwms = <&tpm5 0 50000 0>;
+		brightness-levels = <0 36 72 108 144 180 216 255>;
+		default-brightness-level = <6>;
+		enable-gpios = <&tca9555_a21 1 GPIO_ACTIVE_HIGH>;	/* LVDS0_BL_EN */
+		status = "disabled";
 	};
 
 	usb_hub_rst: usb_hub_rst {
