@@ -356,6 +356,13 @@
 	status = "okay";
 };
 
+&tpm5 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_tpm5>;
+	status = "okay";
+};
+
+
 &tpm6 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_tpm6>;
@@ -463,8 +470,8 @@
 		#gpio-cells = <2>;
 		interrupt-controller;
 		#interrupt-cells = <2>;
-		interrupt-parent = <&gpio2>;
-		interrupts = <6 IRQ_TYPE_LEVEL_LOW>;
+		interrupt-parent = <&gpio3>;
+		interrupts = <26 IRQ_TYPE_LEVEL_LOW>;
 		status = "okay";
 		gpio-line-names = "", "", "", "","", "", "", "CSI2_PWDN", "", "PCIE1_CLKREQ_N", "", "",
 						"PCIE2_CLKREQ_N", "", "", "";
@@ -751,6 +758,12 @@
 		>;
 	};
 
+	pinctrl_tpm5: tpm5grp {
+		fsl,pins = <
+			IMX95_PAD_GPIO_IO06__TPM5_CH0			0x51e
+		>;
+	};
+
 	pinctrl_tpm6: tpm6grp {
 		fsl,pins = <
 			IMX95_PAD_GPIO_IO19__TPM6_CH2			0x51e
@@ -922,7 +935,7 @@
 
 	pinctrl_tca9555_a21_irq: pca9555_a21_irqgrp {
 		fsl,pins = <
-			IMX95_PAD_GPIO_IO06__GPIO2_IO_BIT6			0x31e
+			IMX95_PAD_CCM_CLKO1__GPIO3_IO_BIT26			0x31e
 		>;
 	};
 
@@ -1097,12 +1110,6 @@
 			IMX95_PAD_SD3_DATA1__USDHC3_DATA1			0x13fe
 			IMX95_PAD_SD3_DATA2__USDHC3_DATA2			0x13fe
 			IMX95_PAD_SD3_DATA3__USDHC3_DATA3			0x13fe
-		>;
-	};
-
-	pinctrl_lvds0_backlight: lvds0_blgrp {
-		fsl,pins = <
-			IMX95_PAD_CCM_CLKO1__GPIO3_IO_BIT26		0x31e	/* LVDS0_BL_EN */
 		>;
 	};
 };
