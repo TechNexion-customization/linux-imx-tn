@@ -162,7 +162,7 @@
 		ethphy2: ethernet-phy2@1 { /* RTL8211F on baseboard */
 			compatible = "ethernet-phy-ieee802.3-c22";
 			reg = <1>;
-			reset-gpios = <&gpio2 13 GPIO_ACTIVE_LOW>;
+			reset-gpios = <&tca9555_a22 1 GPIO_ACTIVE_LOW>;
 			reset-assert-us = <35000>;
 			reset-deassert-us = <75000>;
 			eee-broken-1000t;

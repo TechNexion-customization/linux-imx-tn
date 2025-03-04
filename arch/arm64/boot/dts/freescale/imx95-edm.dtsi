@@ -606,7 +606,7 @@
 	ethphy1: ethernet-phy@1 { /* RTL8211F on SOM */
 			compatible = "ethernet-phy-ieee802.3-c22";
 			reg = <1>;
-			reset-gpios = <&gpio5 17 GPIO_ACTIVE_LOW>;
+			reset-gpios = <&tca9555_a22 2 GPIO_ACTIVE_LOW>;
 			reset-assert-us = <35000>;
 			reset-deassert-us = <75000>;
 			eee-broken-1000t;
@@ -880,7 +880,6 @@
 			IMX95_PAD_ENET1_RD1__NETCMIX_TOP_ETH0_RGMII_RD1		0x57e
 			IMX95_PAD_ENET1_RD2__NETCMIX_TOP_ETH0_RGMII_RD2		0x57e
 			IMX95_PAD_ENET1_RD3__NETCMIX_TOP_ETH0_RGMII_RD3		0x57e
-			IMX95_PAD_GPIO_IO13__GPIO2_IO_BIT13			0x9fe
 		>;
 	};
 
@@ -898,7 +897,6 @@
 			IMX95_PAD_ENET2_RD1__NETCMIX_TOP_ETH1_RGMII_RD1		0x57e
 			IMX95_PAD_ENET2_RD2__NETCMIX_TOP_ETH1_RGMII_RD2		0x57e
 			IMX95_PAD_ENET2_RD3__NETCMIX_TOP_ETH1_RGMII_RD3		0x57e
-			IMX95_PAD_GPIO_IO37__GPIO5_IO_BIT17			0x9fe
 		>;
 	};
 
