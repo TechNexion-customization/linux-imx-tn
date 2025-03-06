@@ -121,33 +121,6 @@
 		};
 	};
 
-/*
-	sound {
-		compatible = "fsl,imx-audio-tlv320aic31xx";
-		model = "tlv320aic3x-audio";
-		audio-cpu = <&sai3>;
-		audio-codec = <&tlv320aic3104>;
-		audio-routing =
-			"Headphone Jack", "HPL",
-			"Headphone Jack", "HPR",
-			"Ext Spk", "SPK",
-			"MIC1LP", "Mic Jack",
-			"MIC1RP", "Mic Jack",
-			"MIC1LP", "MICBIAS",
-			"MIC1RP", "MICBIAS",
-			"Mic Jack", "MICBIAS";
-		headset-det;
-	};
-
-	clocks {
-		codec_osc: aud_mclk {
-			compatible = "fixed-clock";
-			#clock-cells = <0>;
-			clock-frequency = <12000000>;
-			clock-output-names = "codec-mclk";
-		};
-	};
-*/
 	mdio_gpio: mdio-gpio {
 		compatible = "virtual,mdio-gpio";
 		pinctrl-names = "default";
@@ -170,35 +143,6 @@
 			realtek,clkout-disable;
 		};
 	};
-/*
-	sound-wm8960 {
-		compatible = "fsl,imx-audio-wm8960";
-		model = "wm8960-audio";
-		audio-cpu = <&sai3>;
-		audio-codec = <&codec>;
-		codec-master;
-		audio-routing =
-			"Headphone Jack", "HP_L",
-			"Headphone Jack", "HP_R",
-			"Ext Spk", "SPK_LP",
-			"Ext Spk", "SPK_LN",
-			"Ext Spk", "SPK_RP",
-			"Ext Spk", "SPK_RN",
-			"LINPUT1", "Mic Jack",
-			"RINPUT1", "Mic Jack",
-			"Mic Jack", "MICB",
-			"AMIC", "MICB";
-	};
-
-	clocks {
-		codec_osc: aud_mclk {
-			compatible = "fixed-clock";
-			#clock-cells = <0>;
-			clock-frequency = <24000000>;
-			clock-output-names = "wm8960-mclk";
-		};
-	};
-*/
 };
 
 &pcie0 { /* PCIE1 M.2 B key */
