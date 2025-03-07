@@ -143,6 +143,44 @@
 			realtek,clkout-disable;
 		};
 	};
+
+	fan0: pwm-fan {
+		compatible = "pwm-fan";
+		cooling-min-state = <0>;
+		cooling-max-state = <3>;
+		#cooling-cells = <2>;
+		pwms = <&pca9685_pwm 0 4000000>;
+		cooling-levels = <255 192 128 64>;
+		fan-supply = <&reg_fan>;
+	};
+
+        reg_fan: regulator-fan {
+		compatible = "regulator-fixed";
+		regulator-name = "fan-supply";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_c21 6 GPIO_ACTIVE_LOW>;
+		regulator-boot-on;
+	};
+};
+
+&thermal_zones {
+	a55 {
+		cooling-maps {
+			map1 {
+				trip = <&atrip2>;
+				cooling-device = <&fan0 0 1>;
+			};
+			map2 {
+				trip = <&atrip3>;
+				cooling-device = <&fan0 1 2>;
+			};
+			map3 {
+				trip = <&atrip4>;
+				cooling-device = <&fan0 2 3>;
+			};
+		};
+	};
 };
 
 &pcie0 { /* PCIE1 M.2 B key */
