@@ -81,15 +81,6 @@
 		};
 	};
 
-	reg_audio_pwr: regulator-audio-pwr {
-		compatible = "regulator-fixed";
-		regulator-name = "audio-pwr";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		//gpio = <&i2c4_gpio_expander_21 1 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-	};
-
 	reg_1p8v: regulator-1p8v {
 		compatible = "regulator-fixed";
 		regulator-max-microvolt = <1800000>;
@@ -114,16 +105,6 @@
 		gpio = <&gpio3 7 GPIO_ACTIVE_HIGH>;
 		off-on-delay-us = <12000>;
 		enable-active-high;
-	};
-
-	reg_pcie0: regulator-pcie {
-		compatible = "regulator-fixed";
-		regulator-name = "PCIE_WLAN_EN";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		vin-supply = <&reg_m2_pwr>;
-		enable-active-high;
-		regulator-always-on;
 	};
 
 	reg_vref_1v8: regulator-adc-vref {
@@ -165,25 +146,6 @@
 		startup-delay-us = <100>;
 		//startup-delay-us = <20000>;
 		enable-active-high;
-	};
-
-	reg_m2_pwr: regulator-m2-pwr {
-		compatible = "regulator-fixed";
-		regulator-name = "M.2-power";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		//gpio = <&i2c7_pcal6524 20 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-	};
-
-	reg_slot_pwr: regulator-slot-pwr {
-		compatible = "regulator-fixed";
-		regulator-name = "PCIe slot-power";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		//gpio = <&i2c7_pcal6524 14 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-		regulator-always-on;
 	};
 
 	reg_aqr_stby: regulator-aqr-stby {
@@ -989,7 +951,6 @@
 
 &pcie1_ep {
 	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
-	vpcie-supply = <&reg_slot_pwr>;
 	status = "disabled";
 };
 
