@@ -602,12 +602,6 @@
 		>;
 	};
 
-	pinctrl_hp: hpgrp {
-		fsl,pins = <
-			IMX95_PAD_GPIO_IO11__GPIO2_IO_BIT11		0x31e
-		>;
-	};
-
 	pinctrl_lpi2c1: lpi2c1grp {
 		fsl,pins = <
 			IMX95_PAD_I2C1_SCL__AONMIX_TOP_LPI2C1_SCL	0x40000b9e
@@ -647,13 +641,6 @@
 		fsl,pins = <
 			IMX95_PAD_GPIO_IO04__LPI2C6_SDA			0x40000b9e
 			IMX95_PAD_GPIO_IO05__LPI2C6_SCL			0x40000b9e
-		>;
-	};
-
-	pinctrl_lpi2c7: lpi2c7grp {
-		fsl,pins = <
-			IMX95_PAD_GPIO_IO08__LPI2C7_SDA			0x40000b9e
-			IMX95_PAD_GPIO_IO09__LPI2C7_SCL			0x40000b9e
 		>;
 	};
 
@@ -730,23 +717,6 @@
 		>;
 	};
 
-	pinctrl_flexspi1: flexspi1grp {
-		fsl,pins = <
-			IMX95_PAD_XSPI1_SS0_B__FLEXSPI1_A_SS0_B			0x3fe
-			IMX95_PAD_XSPI1_SS1_B__GPIO5_IO_BIT11			0x3fe
-			IMX95_PAD_XSPI1_SCLK__FLEXSPI1_A_SCLK			0x3fe
-			IMX95_PAD_XSPI1_DQS__FLEXSPI1_A_DQS			0x3fe
-			IMX95_PAD_XSPI1_DATA0__FLEXSPI1_A_DATA_BIT0		0x3fe
-			IMX95_PAD_XSPI1_DATA1__FLEXSPI1_A_DATA_BIT1		0x3fe
-			IMX95_PAD_XSPI1_DATA2__FLEXSPI1_A_DATA_BIT2		0x3fe
-			IMX95_PAD_XSPI1_DATA3__FLEXSPI1_A_DATA_BIT3		0x3fe
-			IMX95_PAD_XSPI1_DATA4__FLEXSPI1_A_DATA_BIT4		0x3fe
-			IMX95_PAD_XSPI1_DATA5__FLEXSPI1_A_DATA_BIT5		0x3fe
-			IMX95_PAD_XSPI1_DATA6__FLEXSPI1_A_DATA_BIT6		0x3fe
-			IMX95_PAD_XSPI1_DATA7__FLEXSPI1_A_DATA_BIT7		0x3fe
-		>;
-	};
-
 	pinctrl_tca9555_a21_irq: pca9555_a21_irqgrp {
 		fsl,pins = <
 			IMX95_PAD_CCM_CLKO1__GPIO3_IO_BIT26			0x31e
@@ -766,12 +736,6 @@
 		>;
 	};
 
-	pinctrl_ptn5110: ptn5110grp {
-		fsl,pins = <
-			IMX95_PAD_GPIO_IO34__GPIO5_IO_BIT14			0x31e
-		>;
-	};
-
 	pinctrl_sai1: sai1grp {
 		fsl,pins = <
 			IMX95_PAD_SAI1_RXD0__AONMIX_TOP_SAI1_RX_DATA_BIT0    0x31e
@@ -788,13 +752,6 @@
 			IMX95_PAD_GPIO_IO26__SAI3_TX_SYNC			0x31e
 			IMX95_PAD_GPIO_IO20__SAI3_RX_DATA_BIT0			0x31e
 			IMX95_PAD_GPIO_IO21__SAI3_TX_DATA_BIT0			0x31e
-		>;
-	};
-
-	pinctrl_spdif: spdifgrp {
-		fsl,pins = <
-			IMX95_PAD_GPIO_IO22__SPDIF_IN				0x31e
-			IMX95_PAD_GPIO_IO23__SPDIF_OUT				0x31e
 		>;
 	};
 
