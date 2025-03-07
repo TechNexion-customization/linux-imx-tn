@@ -26,15 +26,6 @@
 		};
 	};
 
-	fan0: pwm-fan {
-		compatible = "pwm-fan";
-		cooling-min-state = <0>;
-		cooling-max-state = <3>;
-		#cooling-cells = <2>;
-		pwms = <&tpm6 2 4000000 PWM_POLARITY_INVERTED>;
-		cooling-levels = <64 128 192 255>;
-	};
-
 	memory@80000000 {
 		device_type = "memory";
 		reg = <0x0 0x80000000 0 0x80000000>;
@@ -169,7 +160,6 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 		vin-supply = <&reg_m2_pwr>;
-		// = <&i2c7_pcal6524 6 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
 		regulator-always-on;
 	};
@@ -281,25 +271,7 @@
 		fsl,startup-delay-ms = <50>;
 		status = "okay";
 	};
-/*
-	sound-wm8962 {
-		compatible = "fsl,imx-audio-wm8962";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_hp>;
-		model = "wm8962-audio";
-		audio-cpu = <&sai3>;
-		audio-codec = <&wm8962>;
-		hp-det-gpio = <&gpio2 11 GPIO_ACTIVE_HIGH>;
-		audio-routing =
-			"Headphone Jack", "HPOUTL",
-			"Headphone Jack", "HPOUTR",
-			"Ext Spk", "SPKOUTL",
-			"Ext Spk", "SPKOUTR",
-			"AMIC", "MICBIAS",
-			"IN3R", "AMIC",
-			"IN1R", "AMIC";
-	};
-*/
+
 	sound-micfil {
 		compatible = "fsl,imx-audio-card";
 		model = "micfil-audio";
@@ -350,23 +322,9 @@
 	status = "okay";
 };
 
-&tpm3 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_tpm3>;
-	status = "okay";
-};
-
 &tpm5 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_tpm5>;
-	status = "okay";
-};
-
-
-&tpm6 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_tpm6>;
-	pwm-rst;
 	status = "okay";
 };
 
@@ -578,16 +536,6 @@
 	status = "okay";
 };
 
-/*
-&enetc_port2 {
-	phy-handle = <&ethphy2>;
-	phy-mode = "10gbase-r";
-	serdes-supply = <&reg_serdes_en>;
-	managed = "in-band-status";
-	status = "okay";
-};
-*/
-
 &netc_timer {
 	status = "okay";
 };
@@ -645,23 +593,6 @@
 				temperature = <75000>;
 				hysteresis = <2000>;
 				type = "active";
-			};
-		};
-
-		cooling-maps {
-			map1 {
-				trip = <&atrip2>;
-				cooling-device = <&fan0 0 1>;
-			};
-
-			map2 {
-				trip = <&atrip3>;
-				cooling-device = <&fan0 1 2>;
-			};
-
-			map3 {
-				trip = <&atrip4>;
-				cooling-device = <&fan0 2 3>;
 			};
 		};
 	};
@@ -747,26 +678,13 @@
 
 &usb3_dwc3 {
 	dr_mode = "host";
-	//disable-over-current;
 	status = "okay";
 };
 
 &scmi_iomuxc {
-	pinctrl_tpm3: tpm3grp {
-		fsl,pins = <
-			IMX95_PAD_GPIO_IO12__TPM3_CH2			0x51e
-		>;
-	};
-
 	pinctrl_tpm5: tpm5grp {
 		fsl,pins = <
 			IMX95_PAD_GPIO_IO06__TPM5_CH0			0x51e
-		>;
-	};
-
-	pinctrl_tpm6: tpm6grp {
-		fsl,pins = <
-			IMX95_PAD_GPIO_IO19__TPM6_CH2			0x51e
 		>;
 	};
 
