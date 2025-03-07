@@ -428,7 +428,7 @@
 
 	pinctrl_mipi_dsi_irq: mipidsiirqgrp {
 		fsl,pins = <
-			IMX95_PAD_CCM_CLKO3__GPIO4_IO_BIT28			0x31e
+			IMX95_PAD_GPIO_IO19__GPIO2_IO_BIT19			0x31e
 		>;
 	};
 
