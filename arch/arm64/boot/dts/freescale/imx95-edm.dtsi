@@ -104,44 +104,6 @@
 		regulator-name = "+V3.3_SW";
 	};
 
-	reg_can1_stby: regulator-can1-stby {
-		compatible = "regulator-fixed";
-		regulator-name = "can1-stby";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		//gpio = <&i2c6_gpio_expander_21 5 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-		vin-supply = <&reg_can1_en>;
-	};
-
-	reg_can1_en: regulator-can1-en {
-		compatible = "regulator-fixed";
-		regulator-name = "can1-en";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		//gpio = <&i2c6_gpio_expander_21 6 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-	};
-
-	reg_can2_stby: regulator-can2-stby {
-		compatible = "regulator-fixed";
-		regulator-name = "can2-stby";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		//gpio = <&i2c4_gpio_expander_21 3 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-		vin-supply = <&reg_can2_en>;
-	};
-
-	reg_can2_en: regulator-can2-en {
-		compatible = "regulator-fixed";
-		regulator-name = "can2-en";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		//gpio = <&i2c4_gpio_expander_21 4 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
-	};
-
 	reg_usdhc2_vmmc: regulator-usdhc2 {
 		compatible = "regulator-fixed";
 		pinctrl-names = "default";
@@ -332,15 +294,13 @@
 &flexcan1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_flexcan1>;
-	//xceiver-supply = <&reg_can1_stby>;
-	status = "okay";
+	status = "disabled";
 };
 
 &flexcan2 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_flexcan2>;
-	//xceiver-supply = <&reg_can2_stby>;
-	status = "okay";
+	status = "diabled";
 };
 
 &flexspi1 {

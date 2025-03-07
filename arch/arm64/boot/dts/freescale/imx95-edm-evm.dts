@@ -162,6 +162,24 @@
 		gpio = <&tca9555_c21 6 GPIO_ACTIVE_LOW>;
 		regulator-boot-on;
 	};
+
+	reg_can1_stby: regulator-can1-stby {
+		compatible = "regulator-fixed";
+		regulator-name = "can1-stby";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_c21 9 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+	};
+
+	reg_can2_stby: regulator-can2-stby {
+		compatible = "regulator-fixed";
+		regulator-name = "can2-stby";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_c21 10 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+	};
 };
 
 &thermal_zones {
@@ -181,6 +199,16 @@
 			};
 		};
 	};
+};
+
+&flexcan1 {
+	xceiver-supply = <&reg_can1_stby>;
+	status = "okay";
+};
+
+&flexcan2 {
+	xceiver-supply = <&reg_can2_stby>;
+	status = "okay";
 };
 
 &pcie0 { /* PCIE1 M.2 B key */
