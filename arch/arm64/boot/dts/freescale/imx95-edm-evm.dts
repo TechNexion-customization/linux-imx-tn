@@ -299,7 +299,7 @@
 		pinctrl-0 = <&pinctrl_rtc_irq>;
 		reg = <0x68>;
 		interrupt-parent = <&gpio2>;
-		interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
+		interrupts = <13 IRQ_TYPE_LEVEL_LOW>;
 	};
 };
 
@@ -434,7 +434,7 @@
 
 	pinctrl_rtc_irq: rtcirqgrp {
 		fsl,pins = <
-			IMX95_PAD_GPIO_IO05__GPIO2_IO_BIT5			0x31e
+			IMX95_PAD_GPIO_IO13__GPIO2_IO_BIT13			0x31e
 		>;
 	};
 };
