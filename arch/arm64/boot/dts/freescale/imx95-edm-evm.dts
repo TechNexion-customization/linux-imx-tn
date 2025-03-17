@@ -168,8 +168,8 @@
 		regulator-name = "can1-stby";
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
-		gpio = <&tca9555_c21 9 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
+		gpio = <&tca9555_c21 9 GPIO_ACTIVE_LOW>;
+		enable-active-low;
 	};
 
 	reg_can2_stby: regulator-can2-stby {
@@ -177,8 +177,8 @@
 		regulator-name = "can2-stby";
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
-		gpio = <&tca9555_c21 10 GPIO_ACTIVE_HIGH>;
-		enable-active-high;
+		gpio = <&tca9555_c21 10 GPIO_ACTIVE_LOW>;
+		enable-active-low;
 	};
 };
 
