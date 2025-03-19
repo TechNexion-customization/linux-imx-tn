@@ -14,6 +14,14 @@
 	model = "TechNexion EDM-IMX95 and EVM baseboard with 15.6 inch LVDS panel";
 	compatible = "fsl,imx95-edm", "fsl,imx95";
 
+	reg_lvds_pwr: regulator_lvdspwr {	/* LVDS0_VDDEN */
+		status = "okay";
+	};
+
+	lvds0_backlight: lvds0_backlight {
+		status = "okay";
+	};
+
 	lvds0_panel {
 		compatible = "vxt,vl156192108", "panel-lvds";
 		backlight = <&lvds0_backlight>;
@@ -124,12 +132,13 @@
 /* I2C_C on EDM */
 &lpi2c3 {
 	exc80w46: touchscreen@2a {
-	        compatible = "eeti,exc80h60";
-	        pinctrl-names = "default";
-	        pinctrl-0 = <&pinctrl_touch_irq>;
-	        reg = <0x2a>;
-	        interrupt-parent = <&gpio2>;
-	        interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
-	        status = "okay";
+		compatible = "eeti,exc80h60";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_touch_irq>;
+		reg = <0x2a>;
+		interrupt-parent = <&gpio2>;
+		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
+		reset-gpios = <&pca9554_d23 5 GPIO_ACTIVE_LOW>;
+		status = "okay";
 	};
 };
