@@ -91,3 +91,15 @@
 		status = "okay";
 	};
 };
+
+/* I2C_C on EDM */
+&lpi2c3 {
+	exc80w46: touchscreen@2a {
+		compatible = "eeti,exc80h60";
+		reg = <0x2a>;
+		interrupt-parent = <&tca9555_a21>;
+		interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
+		reset-gpios = <&tca9555_a21 2 GPIO_ACTIVE_LOW>;
+		status = "okay";
+	};
+};
