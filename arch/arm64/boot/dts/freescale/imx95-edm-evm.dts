@@ -22,6 +22,22 @@
 		rtc1 = &scmi_bbm;
 	};
 
+	leds {
+		compatible = "gpio-leds";
+
+		led0: led-user1 {
+			label = "user1";
+			gpios = <&tca9555_a21 2 GPIO_ACTIVE_HIGH>;
+			default-state = "on";
+		};
+
+		led1: led-user2 {
+			label = "user2";
+			gpios = <&tca9555_a21 3 GPIO_ACTIVE_HIGH>;
+			default-state = "on";
+		};
+	};
+
 	reg_lvds_pwr: regulator_lvdspwr {	/* LVDS0_VDDEN */
 		compatible = "regulator-fixed";
 		regulator-name = "lvds0_vdden";
