@@ -14,6 +14,14 @@
 	model = "TechNexion EDM-IMX95 and EVM baseboard with TechNexion TEVS camera";
 	compatible = "fsl,imx95-edm", "fsl,imx95";
 
+	reg_lvds_pwr: regulator_lvdspwr {	/* LVDS0_VDDEN */
+		status = "okay";
+	};
+
+	lvds0_backlight: lvds0_backlight {
+		status = "okay";
+	};
+
 	lvds0_panel {
 		compatible = "vxt,vl10112880", "panel-lvds";
 		backlight = <&lvds0_backlight>;
