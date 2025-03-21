@@ -19,6 +19,7 @@
 #include <linux/interrupt.h>
 #include <linux/module.h>
 #include <linux/of.h>
+#include <linux/pm.h>
 #include <linux/regulator/consumer.h>
 #include <linux/sizes.h>
 #include <linux/timer.h>
@@ -336,6 +337,28 @@ static struct attribute_group exc3000_attribute_group = {
 	.attrs = sysfs_attrs
 };
 
+static int exc3000_suspend(struct device *dev)
+{
+	struct i2c_client *client = to_i2c_client(dev);
+	struct exc3000_data *data = i2c_get_clientdata(client);
+
+	del_timer_sync(&data->timer);
+	disable_irq(client->irq);
+
+	return 0;
+}
+
+static int exc3000_resume(struct device *dev)
+{
+	struct i2c_client *client = to_i2c_client(dev);
+	struct exc3000_data *data = i2c_get_clientdata(client);
+
+	enable_irq(client->irq);
+	exc3000_schedule_timer(data);
+
+	return 0;
+}
+
 static int exc3000_probe(struct i2c_client *client)
 {
 	struct exc3000_data *data;
@@ -477,11 +500,15 @@ static const struct acpi_device_id exc3000_acpi_match[] = {
 MODULE_DEVICE_TABLE(acpi, exc3000_acpi_match);
 #endif
 
+static DEFINE_SIMPLE_DEV_PM_OPS(exc3000_pm_ops,
+				exc3000_suspend, exc3000_resume);
+
 static struct i2c_driver exc3000_driver = {
 	.driver = {
 		.name	= "exc3000",
 		.of_match_table = of_match_ptr(exc3000_of_match),
 		.acpi_match_table = ACPI_PTR(exc3000_acpi_match),
+		.pm = &exc3000_pm_ops,
 	},
 	.id_table	= exc3000_id,
 	.probe		= exc3000_probe,
