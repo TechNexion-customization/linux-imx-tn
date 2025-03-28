@@ -169,7 +169,7 @@
 
 			link@0 {
 				reg = <0>;
-				i2c-alias = <0x44>;
+				i2c-alias = <0x43>;
 
 				ti,rx-mode = <3>;
 				ti,bc-gpio = <0>;
@@ -241,7 +241,7 @@
 
 			link@1 {
 				reg = <1>;
-				i2c-alias = <0x45>;
+				i2c-alias = <0x44>;
 
 				ti,rx-mode = <3>;
 				ti,bc-gpio = <0>;
@@ -313,7 +313,7 @@
 
 			link@2 {
 				reg = <2>;
-				i2c-alias = <0x46>;
+				i2c-alias = <0x45>;
 
 				ti,rx-mode = <3>;
 				ti,bc-gpio = <0>;
@@ -385,7 +385,7 @@
 
 			link@3 {
 				reg = <3>;
-				i2c-alias = <0x47>;
+				i2c-alias = <0x46>;
 
 				ti,rx-mode = <3>;
 				ti,bc-gpio = <0>;
@@ -456,7 +456,7 @@
 	};
 };
 
-&lpi2c3 {
+&lpi2c4 {
 	#address-cells = <1>;
 	#size-cells = <0>;
 	clock-frequency = <400000>;
@@ -526,7 +526,7 @@
 
 			link@0 {
 				reg = <0>;
-				i2c-alias = <0x44>;
+				i2c-alias = <0x43>;
 
 				ti,rx-mode = <3>;
 				ti,bc-gpio = <0>;
@@ -598,7 +598,7 @@
 
 			link@1 {
 				reg = <1>;
-				i2c-alias = <0x45>;
+				i2c-alias = <0x44>;
 
 				ti,rx-mode = <3>;
 				ti,bc-gpio = <0>;
@@ -670,7 +670,7 @@
 
 			link@2 {
 				reg = <2>;
-				i2c-alias = <0x46>;
+				i2c-alias = <0x45>;
 
 				ti,rx-mode = <3>;
 				ti,bc-gpio = <0>;
@@ -742,7 +742,7 @@
 
 			link@3 {
 				reg = <3>;
-				i2c-alias = <0x47>;
+				i2c-alias = <0x46>;
 
 				ti,rx-mode = <3>;
 				ti,bc-gpio = <0>;
