@@ -93,7 +93,7 @@
 };
 
 /* TEVS on MIPI CSI1 */
-&lpi2c3 {
+&lpi2c4 {
 	#address-cells = <1>;
 	#size-cells = <0>;
 	status = "okay";
