@@ -1,0 +1,75 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2024 Technexion Ltd.
+ *
+ * Author: Richard Hu <richard.hu@technexion.com>
+ *
+ */
+
+/dts-v1/;
+
+#include "imx95-edm-evm.dts"
+
+/ {
+	model = "TechNexion EDM-IMX95 and EVM baseboard with SGMII";
+	compatible = "fsl,imx95-edm", "fsl,imx95";
+
+	aliases {
+		ethernet0 = &enetc_port1; /* RGMII: RTL8211F on baseboard */
+		ethernet1 = &enetc_port0; /* RGMII: RTL8211F on SOM */	
+		ethernet2 = &enetc_port2; /* SGMII: RTL8211FS on M.2 */
+	};
+
+	reg_serdes_stby: regulator-mac-stby {
+		compatible = "regulator-fixed";
+		regulator-name = "mac-stby";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tca9555_a22 14 GPIO_ACTIVE_LOW>;
+	};
+
+	reg_serdes_en: regulator-mac-en {
+		compatible = "regulator-fixed";
+		regulator-name = "mac-en";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		vin-supply = <&reg_serdes_stby>;
+		gpio = <&tca9555_a22 12 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&enetc_port2 {
+	phy-handle = <&ethphy3>;
+	phy-mode = "sgmii";
+	serdes-supply = <&reg_serdes_en>;
+	//managed = "in-band-status";
+	status = "okay";
+};
+
+&mdio_gpio {
+	status = "okay";
+
+	ethphy3: ethernet-phy3@4 { /* SGMII RTL8211FS on M.2 expansion board */
+		compatible = "ethernet-phy-ieee802.3-c22";
+		reg = <4>;
+		reset-gpios = <&pca9554_sgmii 0 GPIO_ACTIVE_LOW>;
+		reset-assert-us = <35000>;
+		reset-deassert-us = <75000>;
+		eee-broken-1000t;
+		realtek,aldps-disable;
+		realtek,clkout-disable;
+	};
+};
+
+&lpi2c6 {
+	status = "okay";
+	
+	pca9554_sgmii: pca9554_sgmii@27 {
+		compatible = "nxp,pca9554";
+		reg = <0x27>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		status = "okay";
+	};
+};
+
