@@ -1349,6 +1349,20 @@ static const struct xpcs_compat nxp_mx95_xpcs_compat[DW_XPCS_INTERFACE_MAX] = {
 		.an_mode = DW_10GBASER,
 		.pma_config = xpcs_phy_usxgmii_pma_config,
 	},
+	[DW_XPCS_2500BASEX] = {
+		.supported = xpcs_mx95_10g_features,
+		.interface = xpcs_2500basex_interfaces,
+		.num_interfaces = ARRAY_SIZE(xpcs_2500basex_interfaces),
+		.an_mode = DW_2500BASEX,
+		.pma_config = xpcs_phy_usxgmii_pma_config,
+	},
+	[DW_XPCS_SGMII] = {
+		.supported = xpcs_mx95_10g_features,
+		.interface = xpcs_sgmii_interfaces,
+		.num_interfaces = ARRAY_SIZE(xpcs_sgmii_interfaces),
+		.an_mode = DW_AN_C37_SGMII,
+		.pma_config = xpcs_phy_sgmii_1g_pma_config,
+	},
 };
 
 static const struct xpcs_id xpcs_id_list[] = {
@@ -1437,6 +1451,7 @@ static struct dw_xpcs *xpcs_create(struct mdio_device *mdiodev,
 
 		xpcs->pcs.ops = &xpcs_phylink_ops;
 		xpcs->pcs.neg_mode = true;
+		xpcs->interface = interface;
 
 		if (xpcs->dev_flag != DW_DEV_TXGBE) {
 			xpcs->pcs.poll = true;
