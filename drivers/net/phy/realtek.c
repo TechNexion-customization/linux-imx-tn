@@ -431,6 +431,9 @@ static int rtl8211f_config_init(struct phy_device *phydev)
 		val_rxdly = RTL8211F_RX_DELAY;
 		break;
 
+	case PHY_INTERFACE_MODE_SGMII:
+		break;
+
 	default: /* the rest of the modes imply leaving delay as is. */
 		return 0;
 	}
