@@ -42,7 +42,7 @@
 	phy-handle = <&ethphy3>;
 	phy-mode = "sgmii";
 	serdes-supply = <&reg_serdes_en>;
-	//managed = "in-band-status";
+	managed = "in-band-status";
 	status = "okay";
 };
 
